@@ -721,21 +721,21 @@
             let result = '';
             let selectedStore = document.querySelector('input[name="store"]:checked');
             if (selectedStore) {
-                result += '店铺: ' + selectedStore.value + '\n';
+                result += 'Kedai: ' + selectedStore.value + '\n';
             } else {
-                result += '店铺: 未选择\n';
+                result += 'Kedai: 未选择\n';
             }
 
             for (let i = 1; i <= 1000; i++) {
-                let item = document.getElementById('item' + i);
-                if (item && item.checked) {
-                    let quantity = document.getElementById('quantity' + i).value || 1;
-                    result += document.querySelector('label[for="item' + i + '"]').innerText + ': ' + quantity + '\n';
-                }
-            }
-
-            document.getElementById('result').innerText = result;
+        let item = document.getElementById('item' + i);
+        if (item && item.checked) {
+            let quantity = document.getElementById('quantity' + i).value || 1;
+            result += document.querySelector('label[for="item' + i + '"]').innerText + ': ' + quantity + ' Ctn\n'; // 添加 "Ctn"
         }
+    }
+
+    document.getElementById('result').innerText = result;
+}
 
         function copyText() {
             let text = document.getElementById('result').innerText;
