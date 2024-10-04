@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生成并复制文字</title>
+    <title>Airport Stock Request</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -695,8 +695,8 @@
     
     
 
-    <button onclick="generateText()">Generate Item</button>
-    <button onclick="copyText()">Copy Item</button>
+    <button onclick="generateText()">生成文字</button>
+    <button onclick="copyText()">复制文字</button>
     
     <!-- 生成的文字显示在这里 -->
     <div id="result"></div>
@@ -735,7 +735,7 @@
     }
 
     // 添加最后一行带粗体样式的文字
-    result += '\n<span style="font-weight: bold;">Stock Order https://smartprofits.github.io/order/</span>';
+    result += '\n<span style="font-weight: bold;">Airport Stock Order https://smartprofits.github.io/order/</span>';
 
     // 使用 innerHTML 来解析 HTML 标签以显示带有样式的文字
     document.getElementById('result').innerHTML = result;
