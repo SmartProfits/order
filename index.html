@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>生成并复制文字</title>
+    <style>
+        #result {
+            width: 300px;
+            height: 150px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            overflow: auto;
+        }
+
+        /* 设置数量输入框的宽度 */
+        input[type="number"] {
+            width: 50px; /* 适合三位数 */
+            margin-left: 10px; /* 左边距 */
+        }
+    </style>
+</head>
+<body>
+    <h2>选择店铺和商品</h2>
+    
+    <!-- 添加店铺选项 -->
+    <div>
+        <label><input type="radio" name="store" value="JKL"> JKL</label>
+        <label><input type="radio" name="store" value="TOM"> TOM</label>
+        <label><input type="radio" name="store" value="Ole-Ole"> Ole-Ole</label>
+    </div>
+
+    <h3>选择商品并输入数量</h3>
+    
+    <div>
+        <input type="checkbox" id="item1">
+        <label for="item1">Tambun Original</label>
+        <input type="number" id="quantity1" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item2">
+        <label for="item2">Tambun Pandan</label>
+        <input type="number" id="quantity2" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item3">
+        <label for="item3">Tambun White Lotus</label>
+        <input type="number" id="quantity3" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item4">
+        <label for="item4">Tau Sar Pheah</label>
+        <input type="number" id="quantity4" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item5">
+        <label for="item5">Heong Pheah</label>
+        <input type="number" id="quantity5" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item6">
+        <label for="item6">Beh Teh Saw</label>
+        <input type="number" id="quantity6" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item7">
+        <label for="item7">Phong Pheah</label>
+        <input type="number" id="quantity7" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item8">
+        <label for="item8">Pepper Biscuit</label>
+        <input type="number" id="quantity8" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item9">
+        <label for="item9">Hup Toh Soh</label>
+        <input type="number" id="quantity9" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item10">
+        <label for="item10">Omlette Crisp Chocolate</label>
+        <input type="number" id="quantity10" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item11">
+        <label for="item11">Omlette Crisp Pandan</label>
+        <input type="number" id="quantity11" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item12">
+        <label for="item12">Kai Chai Biscuit</label>
+        <input type="number" id="quantity12" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item13">
+        <label for="item13">Almond Slice</label>
+        <input type="number" id="quantity13" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item14">
+        <label for="item14">Almond Slice Salted Egg</label>
+        <input type="number" id="quantity14" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item15">
+        <label for="item15">Durian Crisp</label>
+        <input type="number" id="quantity15" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item16">
+        <label for="item16">Coconut Crisp</label>
+        <input type="number" id="quantity16" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item17">
+        <label for="item17">Salted Fish Crisp</label>
+        <input type="number" id="quantity17" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item18">
+        <label for="item18">Salted Egg Crisp</label>
+        <input type="number" id="quantity18" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item19">
+        <label for="item19">Cheese Crisp</label>
+        <input type="number" id="quantity19" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item20">
+        <label for="item20">Chic Kut Teh</label>
+        <input type="number" id="quantity20" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item21">
+        <label for="item21">Ginger Slice</label>
+        <input type="number" id="quantity21" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item22">
+        <label for="item22">White Coffee Mini</label>
+        <input type="number" id="quantity22" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item23">
+        <label for="item23">White Coffee Mini No Sugar</label>
+        <input type="number" id="quantity23" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item24">
+        <label for="item24">Teh Tarik Mini</label>
+        <input type="number" id="quantity24" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item25">
+        <label for="item25">Durian White Coffee Mini</label>
+        <input type="number" id="quantity25" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item26">
+        <label for="item26">Dried Mango</label>
+        <input type="number" id="quantity26" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item27">
+        <label for="item27">Kacang Tumbuk</label>
+        <input type="number" id="quantity27" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item28">
+        <label for="item28">Gula Kacang</label>
+        <input type="number" id="quantity28" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item29">
+        <label for="item29">Black Sesame Peanut Candy</label>
+        <input type="number" id="quantity29" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item30">
+        <label for="item30">Shat Kek Ma</label>
+        <input type="number" id="quantity30" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item31">
+        <label for="item31">Shat Kek Ma (Brown Sugar)</label>
+        <input type="number" id="quantity31" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item32">
+        <label for="item32">Coconut Biscuits</label>
+        <input type="number" id="quantity32" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item33">
+        <label for="item33">Freeze Dried Durian 50g</label>
+        <input type="number" id="quantity33" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item34">
+        <label for="item34">Freeze Dried Mango 50g</label>
+        <input type="number" id="quantity34" min="1" placeholder="数量">
+    </div>
+
+    <div>
+        <input type="checkbox" id="item35">
+        <label for="item35">Freeze Dried Strawberry 20g</label>
+        <input type="number" id="quantity35" min="1" placeholder="数量">
+    </div>
+
+    <button onclick="generateText()">生成文字</button>
+    <button onclick="copyText()">复制文字</button>
+    
+    <!-- 生成的文字显示在这里 -->
+    <div id="result"></div>
+
+    <script>
+        function generateText() {
+            let result = '';
+            
+            // 获取选中的店铺
+            let selectedStore = document.querySelector('input[name="store"]:checked');
+            if (selectedStore) {
+                result += '店铺: ' + selectedStore.value + '\n';
+            } else {
+                result += '店铺: 未选择\n';
+            }
+
+            // 获取商品和数量
+            for (let i = 1; i <= 35; i++) {
+                if (document.getElementById('item' + i).checked) {
+                    let quantity = document.getElementById('quantity' + i).value || 1; // 默认值为1
+                    result += document.querySelector('label[for="item' + i + '"]').innerText + ': ' + quantity + '\n';
+                }
+            }
+            
+            // 将生成的文字显示在框框里
+            document.getElementById('result').innerText = result;
+        }
+
+        function copyText() {
+            let text = document.getElementById('result').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('文字已复制');
+            }).catch(err => {
+                console.error('无法复制', err);
+            });
+        }
+    </script>
+</body>
+</html>
