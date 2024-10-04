@@ -734,10 +734,10 @@
         }
     }
 
-    // 添加粗体的最后一行文字
-    result += '\n<b>Stock Order https://smartprofits.github.io/order/</b>';
+    // 添加最后一行带粗体样式的文字
+    result += '\n<span style="font-weight: bold;">Stock Order https://smartprofits.github.io/order/</span>';
 
-    // 使用 innerHTML 来解析 HTML 标签以显示粗体
+    // 使用 innerHTML 来解析 HTML 标签以显示带有样式的文字
     document.getElementById('result').innerHTML = result;
 }
 
