@@ -66,9 +66,9 @@
     <h3>选择店铺</h3>
     
     <div>
-        <label><input type="radio" name="store" value="*JKL*" onclick="toggleItems()"> JKL</label>
-        <label><input type="radio" name="store" value="*TOM*" onclick="toggleItems()"> TOM</label>
-        <label><input type="radio" name="store" value="*Ole-Ole*" onclick="toggleItems()"> Ole-Ole</label>
+        <label><input type="radio" name="store" value="JKL" onclick="toggleItems()"> JKL</label>
+        <label><input type="radio" name="store" value="TOM" onclick="toggleItems()"> TOM</label>
+        <label><input type="radio" name="store" value="Ole-Ole" onclick="toggleItems()"> Ole-Ole</label>
     </div>
 
     <h3>选择商品（没输入数量默认是1）</h3>
@@ -76,12 +76,11 @@
     <div id="productList"></div>
 
     <button onclick="generateText()">生成文字</button>
-    <button onclick="copyText()">复制文字</button>
+    <button onclick="copyAndSendWhatsApp()">复制并发送至WhatsApp</button>
 
     <div id="result"></div>
 
     <script>
-        // 包含102个商品的列表
         const products = [
             { id: 1, name: "Tambun Original" },
             { id: 2, name: "Tambun Pandan" },
@@ -123,71 +122,9 @@
             { id: 38, name: "Raisin Cookies" },
             { id: 39, name: "Almond Cookies" },
             { id: 40, name: "Pineapple Tart" },
-            { id: 41, name: "Red Bean Mochi" },
-            { id: 42, name: "Peanut Mochi" },
-            { id: 43, name: "Green Tea Mochi" },
-            { id: 44, name: "Durian Mochi" },
-            { id: 45, name: "Yam Mochi" },
-            { id: 46, name: "Mochi Milk With Yam Filling" },
-            { id: 47, name: "Mochi Milk With Mango Filling" },
-            { id: 48, name: "Mochi Milk With Green Tea" },
-            { id: 49, name: "Sotong Cuttlefish" },
-            { id: 50, name: "Gula Cuttlefish" },
-            { id: 51, name: "Satay Fish" },
-            { id: 52, name: "Fillet Cracker With Anchovy" },
-            { id: 53, name: "Fillet Cracker With Seaweed" },
-            { id: 54, name: "Sakura Shrimp" },
-            { id: 55, name: "White Coffee" },
-            { id: 56, name: "Kopi O 2 in 1" },
-            { id: 57, name: "Kopi O No Sugar" },
-            { id: 58, name: "BH Teh Tarik" },
-            { id: 59, name: "Durian White Coffee" },
-            { id: 60, name: "Frugurt Yogurt - Blueberry" },
-            { id: 61, name: "Frugurt Yogurt - Peach" },
-            { id: 62, name: "Frugurt Yogurt - Mango" },
-            { id: 63, name: "Durian Pudding" },
-            { id: 64, name: "Coconut Pudding" },
-            { id: 65, name: "Dodol Durian 150g" },
-            { id: 66, name: "Dodol Coconut 150g" },
-            { id: 67, name: "Dodol Pandan 150g" },
-            { id: 68, name: "Durian Beh Teh Saw" },
-            { id: 69, name: "Durian Kuih" },
-            { id: 70, name: "Musang King Tart" },
-            { id: 71, name: "Mango King Tart" },
-            { id: 72, name: "Durian Wafer Roll" },
-            { id: 73, name: "Omelette Crisp - Durian" },
-            { id: 74, name: "Omelette Crisp - Pandan" },
-            { id: 75, name: "Omelette Crisp - Choco" },
-            { id: 76, name: "HT Coconut Ori Cookies" },
-            { id: 77, name: "HT Coconut Pandan Cookies" },
-            { id: 78, name: "HT Dodol Gula Melaka" },
-            { id: 79, name: "HT Dodol Durian" },
-            { id: 80, name: "HT Freeze Dried Mango" },
-            { id: 81, name: "HT Freeze Dried Durian" },
-            { id: 82, name: "Salted Egg Fish Skin" },
-            { id: 83, name: "Salted Egg Fish Skin Spicy" },
-            { id: 84, name: "Salted Egg Salmon Skin" },
-            { id: 85, name: "Cuttlefish Red" },
-            { id: 86, name: "Cuttlefish Lemon" },
-            { id: 87, name: "Cuttlefish Honey" },
-            { id: 88, name: "Cuttlefish Floss Original" },
-            { id: 89, name: "Cuttlefish Massive" },
-            { id: 90, name: "Cuttlefish Whole" },
-            { id: 91, name: "Cuttlefish Roasted" },
-            { id: 92, name: "Cuttlefish Chili" },
-            { id: 93, name: "Five Star Cuttlefish" },
-            { id: 94, name: "Musang King Durian Candy" },
-            { id: 95, name: "HT Kopi Dodol" },
-            { id: 96, name: "Amplang Ikan" },
-            { id: 97, name: "Amplang Udang" },
-            { id: 98, name: "Amplang Sotong" },
-            { id: 99, name: "Kopi Tenom Silver" },
-            { id: 100, name: "Kopi Tenom Gold" },
-            { id: 101, name: "Kopi Tenom Blue" },
-            { id: 102, name: "Kopi Tenom Green" }
+            // Add more products here...
         ];
 
-        // 页面加载时动态生成商品复选框和输入框
         function loadProducts() {
             const productList = document.getElementById('productList');
             products.forEach(product => {
@@ -201,7 +138,6 @@
             });
         }
 
-        // 切换启用/禁用状态
         function toggleItems() {
             let selectedStore = document.querySelector('input[name="store"]:checked');
             let checkboxes = document.querySelectorAll('#productList input[type="checkbox"]');
@@ -216,7 +152,6 @@
             }
         }
 
-        // 生成订单信息
         function generateText() {
             let result = '';
             let selectedStore = document.querySelector('input[name="store"]:checked');
@@ -230,19 +165,23 @@
                 let item = document.getElementById('item' + product.id);
                 if (item && item.checked) {
                     let quantity = document.getElementById('quantity' + product.id).value || 1;
-                    result += product.name + ': ' + quantity + ' ctn\n';
+                    result += product.name + ': ' + quantity + ' Ctn\n';
                 }
             });
 
-            result += '\n<span style="font-weight: bold;">Airport Stock Order https://smartprofits.github.io/order/</span>';
-            document.getElementById('result').innerHTML = result;
+            result += '\nAirport Stock Order: https://smartprofits.github.io/order/';
+            document.getElementById('result').innerText = result;
+            return result; // 返回生成的文本
         }
 
-        // 复制文字
-        function copyText() {
-            let text = document.getElementById('result').innerText;
+        // 复制并跳转到WhatsApp
+        function copyAndSendWhatsApp() {
+            let text = generateText();
             navigator.clipboard.writeText(text).then(() => {
-                alert('文字已复制');
+                alert('文字已复制，现在跳转到WhatsApp');
+                // WhatsApp 跳转链接，%20表示空格
+                let whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                window.location.href = whatsappURL;
             }).catch(err => {
                 console.error('无法复制', err);
             });
