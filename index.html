@@ -12,10 +12,9 @@
         }
 
         h2, h3 {
-            font-size: 1.2rem; /* 调整标题大小 */
+            font-size: 1.2rem;
         }
 
-        /* 设置适应屏幕宽度的布局 */
         #result {
             width: 100%;
             height: 150px;
@@ -24,45 +23,41 @@
             margin-top: 10px;
             white-space: pre-wrap;
             overflow: auto;
-            font-size: 1rem; /* 调整生成文字的字体大小 */
+            font-size: 1rem;
         }
 
-        /* 设置输入框和复选框的样式 */
         div {
             margin-bottom: 10px;
         }
 
         label {
-            font-size: 1rem; /* 调整标签字体大小 */
+            font-size: 1rem;
         }
 
         input[type="number"], input[type="checkbox"] {
-            font-size: 1rem; /* 调整输入框和复选框的字体大小 */
+            font-size: 1rem;
         }
 
-        /* 设置按钮样式 */
         button {
             padding: 10px 15px;
-            font-size: 1rem; /* 调整按钮字体大小 */
+            font-size: 1rem;
             margin: 5px 0;
             cursor: pointer;
-            width: 100%; /* 使按钮在小屏幕上占满宽度 */
+            width: 100%;
         }
 
-        /* 设置数量输入框的宽度 */
         input[type="number"] {
-            width: 70px; /* 适合手机显示 */
+            width: 70px;
             margin-left: 10px;
         }
 
-        /* 响应式设计 */
         @media (max-width: 768px) {
             h2, h3 {
                 font-size: 1rem;
             }
 
             label, input[type="number"], input[type="checkbox"], button {
-                font-size: 0.9rem; /* 手机屏幕上稍微缩小字体 */
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -70,639 +65,143 @@
 <body>
     <h3>选择店铺</h3>
     
-    <!-- 添加店铺选项 -->
     <div>
-        <label><input type="radio" name="store" value="JKL" onclick="toggleItems()"> JKL</label>
-        <label><input type="radio" name="store" value="TOM" onclick="toggleItems()"> TOM</label>
-        <label><input type="radio" name="store" value="Ole-Ole" onclick="toggleItems()"> Ole-Ole</label>
+        <label><input type="radio" name="store" value="*JKL*" onclick="toggleItems()"> JKL</label>
+        <label><input type="radio" name="store" value="*TOM*" onclick="toggleItems()"> TOM</label>
+        <label><input type="radio" name="store" value="*Ole-Ole*" onclick="toggleItems()"> Ole-Ole</label>
     </div>
 
     <h3>选择商品（没输入数量默认是1）</h3>
-    
-   <!-- 商品列表 -->
-    <div id="productList">
-        <div>
-            <input type="checkbox" id="item1" disabled>
-            <label for="item1">Tambun Original</label>
-            <input type="number" id="quantity1" min="1" placeholder="数量" disabled>
-        </div>
 
-        <div>
-            <input type="checkbox" id="item2" disabled>
-            <label for="item2">Tambun Pandan</label>
-            <input type="number" id="quantity2" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item3" disabled>
-            <label for="item3">Tambun White Lotus</label>
-            <input type="number" id="quantity3" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item4" disabled>
-            <label for="item4">Tau Sar Pheah</label>
-            <input type="number" id="quantity4" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item5" disabled>
-            <label for="item5">Heong Pheah</label>
-            <input type="number" id="quantity5" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item6" disabled>
-            <label for="item6">Beh Teh Saw</label>
-            <input type="number" id="quantity6" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item7" disabled>
-            <label for="item7">Phong Pheah</label>
-            <input type="number" id="quantity7" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item8" disabled>
-            <label for="item8">Pepper Biscuit</label>
-            <input type="number" id="quantity8" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item9" disabled>
-            <label for="item9">Hup Toh Soh</label>
-            <input type="number" id="quantity9" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item10" disabled>
-            <label for="item10">Omlette Crisp Chocolate</label>
-            <input type="number" id="quantity10" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item11" disabled>
-            <label for="item11">Omlette Crisp Pandan</label>
-            <input type="number" id="quantity11" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item12" disabled>
-            <label for="item12">Kai Chai Biscuit</label>
-            <input type="number" id="quantity12" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item13" disabled>
-            <label for="item13">Almond Slice</label>
-            <input type="number" id="quantity13" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item14" disabled>
-            <label for="item14">Almond Slice Salted Egg</label>
-            <input type="number" id="quantity14" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item15" disabled>
-            <label for="item15">Durian Crisp</label>
-            <input type="number" id="quantity15" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item16" disabled>
-            <label for="item16">Coconut Crisp</label>
-            <input type="number" id="quantity16" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item17" disabled>
-            <label for="item17">Salted Fish Crisp</label>
-            <input type="number" id="quantity17" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item18" disabled>
-            <label for="item18">Salted Egg Crisp</label>
-            <input type="number" id="quantity18" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item19" disabled>
-            <label for="item19">Cheese Crisp</label>
-            <input type="number" id="quantity19" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item20" disabled>
-            <label for="item20">Chic Kut Teh</label>
-            <input type="number" id="quantity20" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item21" disabled>
-            <label for="item21">Ginger Slice</label>
-            <input type="number" id="quantity21" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item22" disabled>
-            <label for="item22">White Coffee Mini</label>
-            <input type="number" id="quantity22" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item23" disabled>
-            <label for="item23">White Coffee Mini No Sugar</label>
-            <input type="number" id="quantity23" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item24" disabled>
-            <label for="item24">Teh Tarik Mini</label>
-            <input type="number" id="quantity24" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item25" disabled>
-            <label for="item25">Durian White Coffee Mini</label>
-            <input type="number" id="quantity25" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item26" disabled>
-            <label for="item26">Dried Mango</label>
-            <input type="number" id="quantity26" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item27" disabled>
-            <label for="item27">Kacang Tumbuk</label>
-            <input type="number" id="quantity27" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item28" disabled>
-            <label for="item28">Gula Kacang</label>
-            <input type="number" id="quantity28" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item29" disabled>
-            <label for="item29">Black Sesame Peanut Candy</label>
-            <input type="number" id="quantity29" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item30" disabled>
-            <label for="item30">Shat Kek Ma</label>
-            <input type="number" id="quantity30" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item31" disabled>
-            <label for="item31">Shat Kek Ma (Brown Sugar)</label>
-            <input type="number" id="quantity31" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item32" disabled>
-            <label for="item32">Coconut Biscuits</label>
-            <input type="number" id="quantity32" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item33" disabled>
-            <label for="item33">Freeze Dried Durian 50g</label>
-            <input type="number" id="quantity33" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item34" disabled>
-            <label for="item34">Freeze Dried Mango 50g</label>
-            <input type="number" id="quantity34" min="1" placeholder="数量" disabled>
-        </div>
-
-        <div>
-            <input type="checkbox" id="item35" disabled>
-            <label for="item35">Freeze Dried Strawberry 20g</label>
-            <input type="number" id="quantity35" min="1" placeholder="数量" disabled>
-        </div>
-        
-        <div>
-    <input type="checkbox" id="item36" onchange="toggleInput('item36', 'quantity36')">
-    <label for="item36">Butter Cookies</label>
-    <input type="number" id="quantity36" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item37" onchange="toggleInput('item37', 'quantity37')">
-    <label for="item37">Chocolate Cookies</label>
-    <input type="number" id="quantity37" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item38" onchange="toggleInput('item38', 'quantity38')">
-    <label for="item38">Raisin Cookies</label>
-    <input type="number" id="quantity38" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item39" onchange="toggleInput('item39', 'quantity39')">
-    <label for="item39">Almond Cookies</label>
-    <input type="number" id="quantity39" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item40" onchange="toggleInput('item40', 'quantity40')">
-    <label for="item40">Pineapple Tart</label>
-    <input type="number" id="quantity40" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item41" onchange="toggleInput('item41', 'quantity41')">
-    <label for="item41">Red Bean Mochi</label>
-    <input type="number" id="quantity41" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item42" onchange="toggleInput('item42', 'quantity42')">
-    <label for="item42">Peanut Mochi</label>
-    <input type="number" id="quantity42" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item43" onchange="toggleInput('item43', 'quantity43')">
-    <label for="item43">Green Tea Mochi</label>
-    <input type="number" id="quantity43" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item44" onchange="toggleInput('item44', 'quantity44')">
-    <label for="item44">Durian Mochi</label>
-    <input type="number" id="quantity44" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item45" onchange="toggleInput('item45', 'quantity45')">
-    <label for="item45">Yam Mochi</label>
-    <input type="number" id="quantity45" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item46" onchange="toggleInput('item46', 'quantity46')">
-    <label for="item46">Mochi Milk With Yam Filling</label>
-    <input type="number" id="quantity46" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item47" onchange="toggleInput('item47', 'quantity47')">
-    <label for="item47">Mochi Milk With Mango Filling</label>
-    <input type="number" id="quantity47" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item48" onchange="toggleInput('item48', 'quantity48')">
-    <label for="item48">Mochi Milk With Green Tea</label>
-    <input type="number" id="quantity48" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item49" onchange="toggleInput('item49', 'quantity49')">
-    <label for="item49">Sotong Cuttlefish</label>
-    <input type="number" id="quantity49" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item50" onchange="toggleInput('item50', 'quantity50')">
-    <label for="item50">Gula Cuttlefish</label>
-    <input type="number" id="quantity50" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item51" onchange="toggleInput('item51', 'quantity51')">
-    <label for="item51">Satay Fish</label>
-    <input type="number" id="quantity51" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item52" onchange="toggleInput('item52', 'quantity52')">
-    <label for="item52">Fillet Cracker With Anchovy</label>
-    <input type="number" id="quantity52" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item53" onchange="toggleInput('item53', 'quantity53')">
-    <label for="item53">Fillet Cracker With Seaweed</label>
-    <input type="number" id="quantity53" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item54" onchange="toggleInput('item54', 'quantity54')">
-    <label for="item54">Sakura Shrimp</label>
-    <input type="number" id="quantity54" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item55" onchange="toggleInput('item55', 'quantity55')">
-    <label for="item55">White Coffee</label>
-    <input type="number" id="quantity55" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item56" onchange="toggleInput('item56', 'quantity56')">
-    <label for="item56">Kopi O 2 in 1</label>
-    <input type="number" id="quantity56" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item57" onchange="toggleInput('item57', 'quantity57')">
-    <label for="item57">Kopi O No Sugar</label>
-    <input type="number" id="quantity57" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item58" onchange="toggleInput('item58', 'quantity58')">
-    <label for="item58">BH Teh Tarik</label>
-    <input type="number" id="quantity58" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item59" onchange="toggleInput('item59', 'quantity59')">
-    <label for="item59">Durian White Coffee</label>
-    <input type="number" id="quantity59" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item60" onchange="toggleInput('item60', 'quantity60')">
-    <label for="item60">Frugurt Yogurt - Blueberry</label>
-    <input type="number" id="quantity60" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item61" onchange="toggleInput('item61', 'quantity61')">
-    <label for="item61">Frugurt Yogurt - Peach</label>
-    <input type="number" id="quantity61" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item62" onchange="toggleInput('item62', 'quantity62')">
-    <label for="item62">Frugurt Yogurt - Mango</label>
-    <input type="number" id="quantity62" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item63" onchange="toggleInput('item63', 'quantity63')">
-    <label for="item63">Durian Pudding</label>
-    <input type="number" id="quantity63" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item64" onchange="toggleInput('item64', 'quantity64')">
-    <label for="item64">Coconut Pudding</label>
-    <input type="number" id="quantity64" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item65" onchange="toggleInput('item65', 'quantity65')">
-    <label for="item65">Dodol Durian 150g</label>
-    <input type="number" id="quantity65" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item66" onchange="toggleInput('item66', 'quantity66')">
-    <label for="item66">Dodol Coconut 150g</label>
-    <input type="number" id="quantity66" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item67" onchange="toggleInput('item67', 'quantity67')">
-    <label for="item67">Dodol Pandan 150g</label>
-    <input type="number" id="quantity67" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item68" onchange="toggleInput('item68', 'quantity68')">
-    <label for="item68">Durian Beh Teh Saw</label>
-    <input type="number" id="quantity68" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item69" onchange="toggleInput('item69', 'quantity69')">
-    <label for="item69">Durian Kuih</label>
-    <input type="number" id="quantity69" min="1" placeholder="数量" disabled>
-</div>
-   
-    <div>
-    <input type="checkbox" id="item70" onchange="toggleInput('item70', 'quantity70')">
-    <label for="item70">Musang King Tart</label>
-    <input type="number" id="quantity70" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item71" onchange="toggleInput('item71', 'quantity71')">
-    <label for="item71">Mango King Tart</label>
-    <input type="number" id="quantity71" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item72" onchange="toggleInput('item72', 'quantity72')">
-    <label for="item72">Durian Wafer Roll</label>
-    <input type="number" id="quantity72" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item73" onchange="toggleInput('item73', 'quantity73')">
-    <label for="item73">Omelette Crisp - Durian</label>
-    <input type="number" id="quantity73" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item74" onchange="toggleInput('item74', 'quantity74')">
-    <label for="item74">Omelette Crisp - Pandan</label>
-    <input type="number" id="quantity74" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item75" onchange="toggleInput('item75', 'quantity75')">
-    <label for="item75">Omelette Crisp - Choco</label>
-    <input type="number" id="quantity75" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item76" onchange="toggleInput('item76', 'quantity76')">
-    <label for="item76">HT Coconut Ori Cookies</label>
-    <input type="number" id="quantity76" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item77" onchange="toggleInput('item77', 'quantity77')">
-    <label for="item77">HT Coconut Pandan Cookies</label>
-    <input type="number" id="quantity77" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item78" onchange="toggleInput('item78', 'quantity78')">
-    <label for="item78">HT Dodol Gula Melaka</label>
-    <input type="number" id="quantity78" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item79" onchange="toggleInput('item79', 'quantity79')">
-    <label for="item79">HT Dodol Durian</label>
-    <input type="number" id="quantity79" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item80" onchange="toggleInput('item80', 'quantity80')">
-    <label for="item80">HT Freeze Dried Mango</label>
-    <input type="number" id="quantity80" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item81" onchange="toggleInput('item81', 'quantity81')">
-    <label for="item81">HT Freeze Dried Durian</label>
-    <input type="number" id="quantity81" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item82" onchange="toggleInput('item82', 'quantity82')">
-    <label for="item82">Salted Egg Fish Skin</label>
-    <input type="number" id="quantity82" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item83" onchange="toggleInput('item83', 'quantity83')">
-    <label for="item83">Salted Egg Fish Skin Spicy</label>
-    <input type="number" id="quantity83" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item84" onchange="toggleInput('item84', 'quantity84')">
-    <label for="item84">Salted Egg Salmon Skin</label>
-    <input type="number" id="quantity84" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item85" onchange="toggleInput('item85', 'quantity85')">
-    <label for="item85">Cuttlefish Red</label>
-    <input type="number" id="quantity85" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item86" onchange="toggleInput('item86', 'quantity86')">
-    <label for="item86">Cuttlefish Lemon</label>
-    <input type="number" id="quantity86" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item87" onchange="toggleInput('item87', 'quantity87')">
-    <label for="item87">Cuttlefish Honey</label>
-    <input type="number" id="quantity87" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item88" onchange="toggleInput('item88', 'quantity88')">
-    <label for="item88">Cuttlefish Floss Original</label>
-    <input type="number" id="quantity88" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item89" onchange="toggleInput('item89', 'quantity89')">
-    <label for="item89">Cuttlefish Massive</label>
-    <input type="number" id="quantity89" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item90" onchange="toggleInput('item90', 'quantity90')">
-    <label for="item90">Cuttlefish Whole</label>
-    <input type="number" id="quantity90" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item91" onchange="toggleInput('item91', 'quantity91')">
-    <label for="item91">Cuttlefish Roasted</label>
-    <input type="number" id="quantity91" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item92" onchange="toggleInput('item92', 'quantity92')">
-    <label for="item92">Cuttlefish Chili</label>
-    <input type="number" id="quantity92" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item93" onchange="toggleInput('item93', 'quantity93')">
-    <label for="item93">Five Star Cuttlefish</label>
-    <input type="number" id="quantity93" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item94" onchange="toggleInput('item94', 'quantity94')">
-    <label for="item94">Musang King Durian Candy</label>
-    <input type="number" id="quantity94" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item95" onchange="toggleInput('item95', 'quantity95')">
-    <label for="item95">HT Kopi Dodol</label>
-    <input type="number" id="quantity95" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item96" onchange="toggleInput('item96', 'quantity96')">
-    <label for="item96">Amplang Ikan</label>
-    <input type="number" id="quantity96" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item97" onchange="toggleInput('item97', 'quantity97')">
-    <label for="item97">Amplang Udang</label>
-    <input type="number" id="quantity97" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item98" onchange="toggleInput('item98', 'quantity98')">
-    <label for="item98">Amplang Sotong</label>
-    <input type="number" id="quantity98" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item99" onchange="toggleInput('item99', 'quantity99')">
-    <label for="item99">Kopi Tenom Silver</label>
-    <input type="number" id="quantity99" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item100" onchange="toggleInput('item100', 'quantity100')">
-    <label for="item100">Kopi Tenom Gold</label>
-    <input type="number" id="quantity100" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item101" onchange="toggleInput('item101', 'quantity101')">
-    <label for="item101">Kopi Tenom Blue</label>
-    <input type="number" id="quantity101" min="1" placeholder="数量" disabled>
-</div>
-
-<div>
-    <input type="checkbox" id="item102" onchange="toggleInput('item102', 'quantity102')">
-    <label for="item102">Kopi Tenom Green</label>
-    <input type="number" id="quantity102" min="1" placeholder="数量" disabled>
-</div>
-    
-    
+    <div id="productList"></div>
 
     <button onclick="generateText()">生成文字</button>
     <button onclick="copyText()">复制文字</button>
-    
-    <!-- 生成的文字显示在这里 -->
+
     <div id="result"></div>
 
     <script>
-        // 切换商品复选框和数量输入框的启用/禁用状态
+        // 包含102个商品的列表
+        const products = [
+            { id: 1, name: "Tambun Original" },
+            { id: 2, name: "Tambun Pandan" },
+            { id: 3, name: "Tambun White Lotus" },
+            { id: 4, name: "Tau Sar Pheah" },
+            { id: 5, name: "Heong Pheah" },
+            { id: 6, name: "Beh Teh Saw" },
+            { id: 7, name: "Phong Pheah" },
+            { id: 8, name: "Pepper Biscuit" },
+            { id: 9, name: "Hup Toh Soh" },
+            { id: 10, name: "Omlette Crisp Chocolate" },
+            { id: 11, name: "Omlette Crisp Pandan" },
+            { id: 12, name: "Kai Chai Biscuit" },
+            { id: 13, name: "Almond Slice" },
+            { id: 14, name: "Almond Slice Salted Egg" },
+            { id: 15, name: "Durian Crisp" },
+            { id: 16, name: "Coconut Crisp" },
+            { id: 17, name: "Salted Fish Crisp" },
+            { id: 18, name: "Salted Egg Crisp" },
+            { id: 19, name: "Cheese Crisp" },
+            { id: 20, name: "Chic Kut Teh" },
+            { id: 21, name: "Ginger Slice" },
+            { id: 22, name: "White Coffee Mini" },
+            { id: 23, name: "White Coffee Mini No Sugar" },
+            { id: 24, name: "Teh Tarik Mini" },
+            { id: 25, name: "Durian White Coffee Mini" },
+            { id: 26, name: "Dried Mango" },
+            { id: 27, name: "Kacang Tumbuk" },
+            { id: 28, name: "Gula Kacang" },
+            { id: 29, name: "Black Sesame Peanut Candy" },
+            { id: 30, name: "Shat Kek Ma" },
+            { id: 31, name: "Shat Kek Ma (Brown Sugar)" },
+            { id: 32, name: "Coconut Biscuits" },
+            { id: 33, name: "Freeze Dried Durian 50g" },
+            { id: 34, name: "Freeze Dried Mango 50g" },
+            { id: 35, name: "Freeze Dried Strawberry 20g" },
+            { id: 36, name: "Butter Cookies" },
+            { id: 37, name: "Chocolate Cookies" },
+            { id: 38, name: "Raisin Cookies" },
+            { id: 39, name: "Almond Cookies" },
+            { id: 40, name: "Pineapple Tart" },
+            { id: 41, name: "Red Bean Mochi" },
+            { id: 42, name: "Peanut Mochi" },
+            { id: 43, name: "Green Tea Mochi" },
+            { id: 44, name: "Durian Mochi" },
+            { id: 45, name: "Yam Mochi" },
+            { id: 46, name: "Mochi Milk With Yam Filling" },
+            { id: 47, name: "Mochi Milk With Mango Filling" },
+            { id: 48, name: "Mochi Milk With Green Tea" },
+            { id: 49, name: "Sotong Cuttlefish" },
+            { id: 50, name: "Gula Cuttlefish" },
+            { id: 51, name: "Satay Fish" },
+            { id: 52, name: "Fillet Cracker With Anchovy" },
+            { id: 53, name: "Fillet Cracker With Seaweed" },
+            { id: 54, name: "Sakura Shrimp" },
+            { id: 55, name: "White Coffee" },
+            { id: 56, name: "Kopi O 2 in 1" },
+            { id: 57, name: "Kopi O No Sugar" },
+            { id: 58, name: "BH Teh Tarik" },
+            { id: 59, name: "Durian White Coffee" },
+            { id: 60, name: "Frugurt Yogurt - Blueberry" },
+            { id: 61, name: "Frugurt Yogurt - Peach" },
+            { id: 62, name: "Frugurt Yogurt - Mango" },
+            { id: 63, name: "Durian Pudding" },
+            { id: 64, name: "Coconut Pudding" },
+            { id: 65, name: "Dodol Durian 150g" },
+            { id: 66, name: "Dodol Coconut 150g" },
+            { id: 67, name: "Dodol Pandan 150g" },
+            { id: 68, name: "Durian Beh Teh Saw" },
+            { id: 69, name: "Durian Kuih" },
+            { id: 70, name: "Musang King Tart" },
+            { id: 71, name: "Mango King Tart" },
+            { id: 72, name: "Durian Wafer Roll" },
+            { id: 73, name: "Omelette Crisp - Durian" },
+            { id: 74, name: "Omelette Crisp - Pandan" },
+            { id: 75, name: "Omelette Crisp - Choco" },
+            { id: 76, name: "HT Coconut Ori Cookies" },
+            { id: 77, name: "HT Coconut Pandan Cookies" },
+            { id: 78, name: "HT Dodol Gula Melaka" },
+            { id: 79, name: "HT Dodol Durian" },
+            { id: 80, name: "HT Freeze Dried Mango" },
+            { id: 81, name: "HT Freeze Dried Durian" },
+            { id: 82, name: "Salted Egg Fish Skin" },
+            { id: 83, name: "Salted Egg Fish Skin Spicy" },
+            { id: 84, name: "Salted Egg Salmon Skin" },
+            { id: 85, name: "Cuttlefish Red" },
+            { id: 86, name: "Cuttlefish Lemon" },
+            { id: 87, name: "Cuttlefish Honey" },
+            { id: 88, name: "Cuttlefish Floss Original" },
+            { id: 89, name: "Cuttlefish Massive" },
+            { id: 90, name: "Cuttlefish Whole" },
+            { id: 91, name: "Cuttlefish Roasted" },
+            { id: 92, name: "Cuttlefish Chili" },
+            { id: 93, name: "Five Star Cuttlefish" },
+            { id: 94, name: "Musang King Durian Candy" },
+            { id: 95, name: "HT Kopi Dodol" },
+            { id: 96, name: "Amplang Ikan" },
+            { id: 97, name: "Amplang Udang" },
+            { id: 98, name: "Amplang Sotong" },
+            { id: 99, name: "Kopi Tenom Silver" },
+            { id: 100, name: "Kopi Tenom Gold" },
+            { id: 101, name: "Kopi Tenom Blue" },
+            { id: 102, name: "Kopi Tenom Green" }
+        ];
+
+        // 页面加载时动态生成商品复选框和输入框
+        function loadProducts() {
+            const productList = document.getElementById('productList');
+            products.forEach(product => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <input type="checkbox" id="item${product.id}" disabled>
+                    <label for="item${product.id}">${product.name}</label>
+                    <input type="number" id="quantity${product.id}" min="1" placeholder="数量" disabled>
+                `;
+                productList.appendChild(div);
+            });
+        }
+
+        // 切换启用/禁用状态
         function toggleItems() {
             let selectedStore = document.querySelector('input[name="store"]:checked');
             let checkboxes = document.querySelectorAll('#productList input[type="checkbox"]');
@@ -717,30 +216,29 @@
             }
         }
 
-     function generateText() {
-    let result = '';
-    let selectedStore = document.querySelector('input[name="store"]:checked');
-    if (selectedStore) {
-        result += 'Kedai: ' + selectedStore.value + '\n';
-    } else {
-        result += 'Kedai: 未选择\n';
-    }
+        // 生成订单信息
+        function generateText() {
+            let result = '';
+            let selectedStore = document.querySelector('input[name="store"]:checked');
+            if (selectedStore) {
+                result += 'Kedai: ' + selectedStore.value + '\n';
+            } else {
+                result += 'Kedai: 未选择\n';
+            }
 
-    for (let i = 1; i <= 1000; i++) {
-        let item = document.getElementById('item' + i);
-        if (item && item.checked) {
-            let quantity = document.getElementById('quantity' + i).value || 1;
-            result += document.querySelector('label[for="item' + i + '"]').innerText + ': ' + quantity + ' Ctn\n'; // 添加 "Ctn"
+            products.forEach(product => {
+                let item = document.getElementById('item' + product.id);
+                if (item && item.checked) {
+                    let quantity = document.getElementById('quantity' + product.id).value || 1;
+                    result += product.name + ': ' + quantity + ' ctn\n';
+                }
+            });
+
+            result += '\n<span style="font-weight: bold;">Airport Stock Order https://smartprofits.github.io/order/</span>';
+            document.getElementById('result').innerHTML = result;
         }
-    }
 
-    // 添加最后一行带粗体样式的文字
-    result += '\n<span style="font-weight: bold;">Airport Stock Order https://smartprofits.github.io/order/</span>';
-
-    // 使用 innerHTML 来解析 HTML 标签以显示带有样式的文字
-    document.getElementById('result').innerHTML = result;
-}
-
+        // 复制文字
         function copyText() {
             let text = document.getElementById('result').innerText;
             navigator.clipboard.writeText(text).then(() => {
@@ -750,8 +248,8 @@
             });
         }
 
-        // 页面加载时默认禁用商品选择
         window.onload = function() {
+            loadProducts();
             toggleItems();
         }
     </script>
