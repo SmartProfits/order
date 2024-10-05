@@ -13,6 +13,14 @@
             color: #333; /* 深色字体提升对比度 */
         }
 
+        /* 新增的 h1 样式 */
+        h1 {
+            font-size: 2.5rem; /* 设置字体大小 */
+            font-weight: bold; /* 设置字体粗细 */
+            text-align: center; /* 居中对齐 */
+            margin-bottom: 150px; /* 下方留一些空间 */
+        }
+
         h2, h3 {
             font-size: 1.4rem;
         }
@@ -64,6 +72,10 @@
         }
 
         @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem; /* 在小屏幕上字体稍微小些 */
+            }
+
             h2, h3 {
                 font-size: 1.2rem;
             }
@@ -83,6 +95,9 @@
     </style>
 </head>
 <body>
+    <!-- 添加标题 -->
+    <h1>Stock Order</h1>
+
     <h3>选择店铺</h3>
     
     <div>
