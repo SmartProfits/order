@@ -36,14 +36,10 @@
 
         label {
             font-size: 1.1rem;
-            display: inline-block; /* 设置为行内块级，便于排列 */
-            width: calc(100% - 90px); /* 预留空间给数量输入框 */
         }
 
         input[type="number"], input[type="checkbox"] {
             font-size: 1rem;
-            width: 70px; /* 设置输入框的宽度 */
-            margin-left: 10px; /* 输入框与商品名称之间的间距 */
         }
 
         button {
@@ -60,6 +56,11 @@
         .whatsapp-button {
             background-color: #25D366; /* WhatsApp绿色 */
             color: white; /* 白色文字 */
+        }
+
+        input[type="number"] {
+            width: 80px;
+            margin-left: 10px;
         }
 
         @media (max-width: 768px) {
@@ -162,14 +163,14 @@
                 { id: 52, name: "Fillet Cracker With Anchovy" },
                 { id: 53, name: "Fillet Cracker With Seaweed" },
                 { id: 54, name: "Sakura Shrimp" },
-                { id: 60, name: "Frugurt Yogurt - Blueberry" },
-                { id: 61, name: "Frugurt Yogurt - Peach" },
-                { id: 62, name: "Frugurt Yogurt - Mango" },
+                { id: 60, name: "Frugurt Yogurt Blueberry" },
+                { id: 61, name: "Frugurt Yogurt Peach" },
+                { id: 62, name: "Frugurt Yogurt Mango" },
                 { id: 63, name: "Durian Pudding" },
                 { id: 64, name: "Coconut Pudding" },
-                { id: 65, name: "BH Dodol Durian 150g" },
-                { id: 66, name: "BH Dodol Coconut 150g" },
-                { id: 67, name: "BH Dodol Pandan 150g" },
+                { id: 65, name: "BH Dodol Durian" },
+                { id: 66, name: "BH Dodol Coconut" },
+                { id: 67, name: "BH Dodol Pandan" },
                 { id: 68, name: "Durian Beh Teh Saw" },
                 { id: 69, name: "Durian Kuih" }
             ],
@@ -216,12 +217,12 @@
                 { id: 50, name: "BH Gula Cuttlefish" }
             ],
             Coffee: [
-                { id: 22, name: "BH White Coffee Mini" },
-                { id: 23, name: "BH White Coffee Mini No Sugar" },
-                { id: 24, name: "BH Teh Tarik Mini" },
-                { id: 25, name: "BH Durian White Coffee Mini" },
+                { id: 22, name: "BH White Coffee (Mini)" },
+                { id: 23, name: "BH White Coffee (Mini) No Sugar" },
+                { id: 24, name: "BH Teh Tarik (Mini)" },
+                { id: 25, name: "BH Durian White Coffee (Mini)" },
                 { id: 55, name: "BH White Coffee" },
-                { id: 56, name: "BH Kopi O 2 in 1" },
+                { id: 56, name: "BH Kopi O 2in1" },
                 { id: 57, name: "BH Kopi O No Sugar" },
                 { id: 58, name: "BH Teh Tarik" },
                 { id: 59, name: "BH Durian White Coffee" },
@@ -249,10 +250,8 @@
             products.forEach(product => {
                 const div = document.createElement('div');
                 div.innerHTML = `
-                    <label>
-                        <input type="checkbox" id="item${product.id}" onchange="saveItem(${product.id}, '${product.name}')">
-                        ${product.name}
-                    </label>
+                    <input type="checkbox" id="item${product.id}" onchange="saveItem(${product.id}, '${product.name}')">
+                    <label for="item${product.id}">${product.name}</label>
                     <input type="number" id="quantity${product.id}" min="1" placeholder="数量" onchange="saveQuantity(${product.id})">
                 `;
                 productList.appendChild(div);
