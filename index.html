@@ -318,7 +318,7 @@
             let result = '';
             let selectedStore = document.querySelector('input[name="store"]:checked');
             if (selectedStore) {
-                result += 'Kedai: ' + selectedStore.value + '\n';
+                result += 'Kedai: ' + selectedStore.value + '\n\n';
             } else {
                 result += 'Kedai: 未选择\n';
             }
@@ -327,7 +327,7 @@
             for (const [id, quantity] of Object.entries(selectedItems)) {
                 const product = Object.values(categories).flat().find(p => p.id == id);
                 if (product) {
-                    result += product.name + ': ' + quantity + ' ctn\n';
+                    result += product.name + ' - ' + quantity + ' ctn\n';
                 }
             }
 
