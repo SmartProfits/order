@@ -7,12 +7,14 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 10px;
+            padding: 15px;
             margin: 0;
+            background-color: #f5f5f5; /* 柔和的浅灰背景 */
+            color: #333; /* 深色字体提升对比度 */
         }
 
         h2, h3 {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
 
         #result {
@@ -23,15 +25,17 @@
             margin-top: 10px;
             white-space: pre-wrap;
             overflow: auto;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            background-color: #fff; /* 结果框为白色背景 */
+            border-radius: 8px;
         }
 
         div {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         label {
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
 
         input[type="number"], input[type="checkbox"] {
@@ -39,13 +43,13 @@
         }
 
         button {
-            padding: 10px 15px;
-            font-size: 1rem;
-            margin: 5px 0;
+            padding: 12px 18px;
+            font-size: 1.1rem;
+            margin: 10px 0;
             cursor: pointer;
             width: 100%;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
         }
 
         /* WhatsApp 绿色按钮样式 */
@@ -55,17 +59,25 @@
         }
 
         input[type="number"] {
-            width: 70px;
+            width: 80px;
             margin-left: 10px;
         }
 
         @media (max-width: 768px) {
             h2, h3 {
-                font-size: 1rem;
+                font-size: 1.2rem;
             }
 
             label, input[type="number"], input[type="checkbox"], button {
-                font-size: 0.9rem;
+                font-size: 1rem;
+            }
+
+            body {
+                padding: 10px; /* 移动设备上更小的内边距 */
+            }
+
+            button {
+                padding: 10px 15px; /* 按钮在小屏幕上更适配 */
             }
         }
     </style>
@@ -103,133 +115,132 @@
         // 分类商品
         const categories = {
             BanHeang: [
-            { id: 1, name: "Tambun Original" },
-            { id: 2, name: "Tambun Pandan" },
-            { id: 3, name: "Tambun White Lotus" },
-            { id: 4, name: "Tau Sar Pheah" },
-            { id: 5, name: "Heong Pheah" },
-            { id: 6, name: "Beh Teh Saw" },
-            { id: 7, name: "Phong Pheah" },
-            { id: 8, name: "Pepper Biscuit" },
-            { id: 9, name: "Hup Toh Soh" },
-            { id: 10, name: "Omlette Crisp Chocolate" },
-            { id: 11, name: "Omlette Crisp Pandan" },
-            { id: 12, name: "Kai Chai Biscuit" },
-            { id: 13, name: "Almond Slice" },
-            { id: 14, name: "Almond Slice Salted Egg" },
-            { id: 15, name: "Durian Crisp" },
-            { id: 16, name: "Coconut Crisp" },
-            { id: 17, name: "Salted Fish Crisp" },
-            { id: 18, name: "Salted Egg Crisp" },
-            { id: 19, name: "Cheese Crisp" },
-            { id: 20, name: "Chic Kut Teh" },
-            { id: 21, name: "Ginger Slice" },
-            { id: 26, name: "Dried Mango" },
-            { id: 27, name: "Kacang Tumbuk" },
-            { id: 28, name: "Gula Kacang" },
-            { id: 29, name: "Black Sesame Peanut Candy" },
-            { id: 30, name: "Shat Kek Ma" },
-            { id: 31, name: "Shat Kek Ma (Brown Sugar)" },
-            { id: 32, name: "Coconut Biscuits" },
-            { id: 33, name: "BH Freeze Dried Durian 50g" },
-            { id: 34, name: "BH Freeze Dried Mango 50g" },
-            { id: 35, name: "BH Freeze Dried Strawberry 20g" },
-            { id: 36, name: "Butter Cookies" },
-            { id: 37, name: "Chocolate Cookies" },
-            { id: 38, name: "Raisin Cookies" },
-            { id: 39, name: "Almond Cookies" },
-            { id: 40, name: "Pineapple Tart" },
-            { id: 41, name: "Red Bean Mochi" },
-            { id: 42, name: "Peanut Mochi" },
-            { id: 43, name: "Green Tea Mochi" },
-            { id: 44, name: "Durian Mochi" },
-            { id: 45, name: "Yam Mochi" },
-            { id: 46, name: "Mochi Milk With Yam Filling" },
-            { id: 47, name: "Mochi Milk With Mango Filling" },
-            { id: 48, name: "Mochi Milk With Green Tea" },
-            { id: 51, name: "Satay Fish" },
-            { id: 52, name: "Fillet Cracker With Anchovy" },
-            { id: 53, name: "Fillet Cracker With Seaweed" },
-            { id: 54, name: "Sakura Shrimp" },
-            { id: 60, name: "Frugurt Yogurt - Blueberry" },
-            { id: 61, name: "Frugurt Yogurt - Peach" },
-            { id: 62, name: "Frugurt Yogurt - Mango" },
-            { id: 63, name: "Durian Pudding" },
-            { id: 64, name: "Coconut Pudding" },
-            { id: 65, name: "BH Dodol Durian 150g" },
-            { id: 66, name: "BH Dodol Coconut 150g" },
-            { id: 67, name: "BH Dodol Pandan 150g" },
-            { id: 68, name: "Durian Beh Teh Saw" },
-            { id: 69, name: "Durian Kuih" }
+                { id: 1, name: "Tambun Original" },
+                { id: 2, name: "Tambun Pandan" },
+                { id: 3, name: "Tambun White Lotus" },
+                { id: 4, name: "Tau Sar Pheah" },
+                { id: 5, name: "Heong Pheah" },
+                { id: 6, name: "Beh Teh Saw" },
+                { id: 7, name: "Phong Pheah" },
+                { id: 8, name: "Pepper Biscuit" },
+                { id: 9, name: "Hup Toh Soh" },
+                { id: 10, name: "Omlette Crisp Chocolate" },
+                { id: 11, name: "Omlette Crisp Pandan" },
+                { id: 12, name: "Kai Chai Biscuit" },
+                { id: 13, name: "Almond Slice" },
+                { id: 14, name: "Almond Slice Salted Egg" },
+                { id: 15, name: "Durian Crisp" },
+                { id: 16, name: "Coconut Crisp" },
+                { id: 17, name: "Salted Fish Crisp" },
+                { id: 18, name: "Salted Egg Crisp" },
+                { id: 19, name: "Cheese Crisp" },
+                { id: 20, name: "Chic Kut Teh" },
+                { id: 21, name: "Ginger Slice" },
+                { id: 26, name: "Dried Mango" },
+                { id: 27, name: "Kacang Tumbuk" },
+                { id: 28, name: "Gula Kacang" },
+                { id: 29, name: "Black Sesame Peanut Candy" },
+                { id: 30, name: "Shat Kek Ma" },
+                { id: 31, name: "Shat Kek Ma (Brown Sugar)" },
+                { id: 32, name: "Coconut Biscuits" },
+                { id: 33, name: "BH Freeze Dried Durian 50g" },
+                { id: 34, name: "BH Freeze Dried Mango 50g" },
+                { id: 35, name: "BH Freeze Dried Strawberry 20g" },
+                { id: 36, name: "Butter Cookies" },
+                { id: 37, name: "Chocolate Cookies" },
+                { id: 38, name: "Raisin Cookies" },
+                { id: 39, name: "Almond Cookies" },
+                { id: 40, name: "Pineapple Tart" },
+                { id: 41, name: "Red Bean Mochi" },
+                { id: 42, name: "Peanut Mochi" },
+                { id: 43, name: "Green Tea Mochi" },
+                { id: 44, name: "Durian Mochi" },
+                { id: 45, name: "Yam Mochi" },
+                { id: 46, name: "Mochi Milk With Yam Filling" },
+                { id: 47, name: "Mochi Milk With Mango Filling" },
+                { id: 48, name: "Mochi Milk With Green Tea" },
+                { id: 51, name: "Satay Fish" },
+                { id: 52, name: "Fillet Cracker With Anchovy" },
+                { id: 53, name: "Fillet Cracker With Seaweed" },
+                { id: 54, name: "Sakura Shrimp" },
+                { id: 60, name: "Frugurt Yogurt - Blueberry" },
+                { id: 61, name: "Frugurt Yogurt - Peach" },
+                { id: 62, name: "Frugurt Yogurt - Mango" },
+                { id: 63, name: "Durian Pudding" },
+                { id: 64, name: "Coconut Pudding" },
+                { id: 65, name: "BH Dodol Durian 150g" },
+                { id: 66, name: "BH Dodol Coconut 150g" },
+                { id: 67, name: "BH Dodol Pandan 150g" },
+                { id: 68, name: "Durian Beh Teh Saw" },
+                { id: 69, name: "Durian Kuih" }
             ],
             HopHup: [
-            { id: 70, name: "Musang King Tart" },
-            { id: 71, name: "Mango Tart" },
-            { id: 72, name: "Durian Wafer Roll" },
-            { id: 73, name: "Omelette Durian" },
-            { id: 76, name: "HT Coconut Ori Cookies" },
-            { id: 77, name: "HT Coconut Pandan Cookies" },
-            { id: 78, name: "HT Dodol Kopi" },
-            { id: 79, name: "HT Dodol Durian" },
-            { id: 80, name: "HT Freeze Dried Mango" },
-            { id: 81, name: "HT Freeze Dried Durian" },
-            { id: 82, name: "Salted Egg Fish Skin" },
-            { id: 83, name: "Salted Egg Fish Skin Spicy" },
-            { id: 84, name: "Salted Egg Salmon Skin" },
-            { id: 94, name: "Musang King Durian Candy" }
+                { id: 70, name: "Musang King Tart" },
+                { id: 71, name: "Mango Tart" },
+                { id: 72, name: "Durian Wafer Roll" },
+                { id: 73, name: "Omelette Durian" },
+                { id: 76, name: "HT Coconut Ori Cookies" },
+                { id: 77, name: "HT Coconut Pandan Cookies" },
+                { id: 78, name: "HT Dodol Kopi" },
+                { id: 79, name: "HT Dodol Durian" },
+                { id: 80, name: "HT Freeze Dried Mango" },
+                { id: 81, name: "HT Freeze Dried Durian" },
+                { id: 82, name: "Salted Egg Fish Skin" },
+                { id: 83, name: "Salted Egg Fish Skin Spicy" },
+                { id: 84, name: "Salted Egg Salmon Skin" },
+                { id: 94, name: "Musang King Durian Candy" }
             ],
             Chocolate: [
-            { id: 108, name: "AD Chocolate Durian" },
-            { id: 109, name: "AD Chocolate Sabah Tea" },
-            { id: 110, name: "AD Chocolate Mango" },
-            { id: 111, name: "AD Chocolate Chili" },
-            { id: 112, name: "AD Chocolate Dark" },
-            { id: 113, name: "AD Chocolate Coffee" },
-            { id: 114, name: "AD Chocolate Banana" },
-            { id: 115, name: "AD Chocolate Tiramisu" },
-            { id: 116, name: "AD Chocolate Mint" },
-            { id: 117, name: "AD Chocolate Rambutan" },
-            { id: 118, name: "AD Chocolate Soursup" }
+                { id: 108, name: "AD Chocolate Durian" },
+                { id: 109, name: "AD Chocolate Sabah Tea" },
+                { id: 110, name: "AD Chocolate Mango" },
+                { id: 111, name: "AD Chocolate Chili" },
+                { id: 112, name: "AD Chocolate Dark" },
+                { id: 113, name: "AD Chocolate Coffee" },
+                { id: 114, name: "AD Chocolate Banana" },
+                { id: 115, name: "AD Chocolate Tiramisu" },
+                { id: 116, name: "AD Chocolate Mint" },
+                { id: 117, name: "AD Chocolate Rambutan" },
+                { id: 118, name: "AD Chocolate Soursup" }
             ],
             Sotong: [
-            { id: 85, name: "Cuttlefish Red" },
-            { id: 86, name: "Cuttlefish Lemon" },
-            { id: 87, name: "Cuttlefish Honey" },
-            { id: 88, name: "Cuttlefish Floss Original" },
-            { id: 89, name: "Cuttlefish Massive" },
-            { id: 90, name: "Cuttlefish Whole" },
-            { id: 91, name: "Cuttlefish Roasted" },
-            { id: 92, name: "Cuttlefish Chili" },
-            { id: 93, name: "Five Star Cuttlefish" },
-            { id: 49, name: "BH Sotong Cuttlefish" },
-            { id: 50, name: "BH Gula Cuttlefish" }
+                { id: 85, name: "Cuttlefish Red" },
+                { id: 86, name: "Cuttlefish Lemon" },
+                { id: 87, name: "Cuttlefish Honey" },
+                { id: 88, name: "Cuttlefish Floss Original" },
+                { id: 89, name: "Cuttlefish Massive" },
+                { id: 90, name: "Cuttlefish Whole" },
+                { id: 91, name: "Cuttlefish Roasted" },
+                { id: 92, name: "Cuttlefish Chili" },
+                { id: 93, name: "Five Star Cuttlefish" },
+                { id: 49, name: "BH Sotong Cuttlefish" },
+                { id: 50, name: "BH Gula Cuttlefish" }
             ],
             Coffee: [
-            { id: 22, name: "BH White Coffee Mini" },
-            { id: 23, name: "BH White Coffee Mini No Sugar" },
-            { id: 24, name: "BH Teh Tarik Mini" },
-            { id: 25, name: "BH Durian White Coffee Mini" },
-            { id: 55, name: "BH White Coffee" },
-            { id: 56, name: "BH Kopi O 2 in 1" },
-            { id: 57, name: "BH Kopi O No Sugar" },
-            { id: 58, name: "BH Teh Tarik" },
-            { id: 59, name: "BH Durian White Coffee" },
-            { id: 99, name: "Kopi Tenom Silver" },
-            { id: 100, name: "Kopi Tenom Gold" },
-            { id: 101, name: "Kopi Tenom Blue" },
-            { id: 102, name: "Kopi Tenom Green" }
+                { id: 22, name: "BH White Coffee Mini" },
+                { id: 23, name: "BH White Coffee Mini No Sugar" },
+                { id: 24, name: "BH Teh Tarik Mini" },
+                { id: 25, name: "BH Durian White Coffee Mini" },
+                { id: 55, name: "BH White Coffee" },
+                { id: 56, name: "BH Kopi O 2 in 1" },
+                { id: 57, name: "BH Kopi O No Sugar" },
+                { id: 58, name: "BH Teh Tarik" },
+                { id: 59, name: "BH Durian White Coffee" },
+                { id: 99, name: "Kopi Tenom Silver" },
+                { id: 100, name: "Kopi Tenom Gold" },
+                { id: 101, name: "Kopi Tenom Blue" },
+                { id: 102, name: "Kopi Tenom Green" }
             ],
             Amplang: [
-            { id: 96, name: "Amplang Ikan" },
-            { id: 97, name: "Amplang Udang" },
-            { id: 98, name: "Amplang Sotong" }
+                { id: 96, name: "Amplang Ikan" },
+                { id: 97, name: "Amplang Udang" },
+                { id: 98, name: "Amplang Sotong" }
             ],
             Other: [
-            { id: 106, name: "Fruity Gummy Assorted" }
+                { id: 106, name: "Fruity Gummy Assorted" }
             ]
         };
 
-        // 记录所有选择的商品
         let selectedItems = {};
 
         function loadProducts(products) {
@@ -245,7 +256,6 @@
                 `;
                 productList.appendChild(div);
 
-                // 恢复之前选择的状态
                 if (selectedItems[product.id]) {
                     document.getElementById('item' + product.id).checked = true;
                     document.getElementById('quantity' + product.id).value = selectedItems[product.id];
@@ -253,7 +263,6 @@
             });
         }
 
-        // 保存商品选择
         function saveItem(id, name) {
             const checkbox = document.getElementById('item' + id);
             const quantity = document.getElementById('quantity' + id).value || 1;
@@ -265,7 +274,6 @@
             }
         }
 
-        // 保存商品数量
         function saveQuantity(id) {
             const quantity = document.getElementById('quantity' + id).value || 1;
             if (selectedItems[id]) {
@@ -290,7 +298,6 @@
         function showCategory() {
             let selectedCategory = document.querySelector('input[name="category"]:checked');
             
-            // 检查是否有选中分类
             if (selectedCategory) {
                 let categoryValue = selectedCategory.value;
                 let productsToShow = categories[categoryValue];
@@ -329,7 +336,6 @@
             return result;
         }
 
-        // 复制并跳转到WhatsApp
         function copyAndSendWhatsApp() {
             let text = generateText();
             navigator.clipboard.writeText(text).then(() => {
