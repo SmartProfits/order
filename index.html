@@ -44,6 +44,14 @@
             margin: 5px 0;
             cursor: pointer;
             width: 100%;
+            border: none;
+            border-radius: 5px;
+        }
+
+        /* WhatsApp 绿色按钮样式 */
+        .whatsapp-button {
+            background-color: #25D366; /* WhatsApp绿色 */
+            color: white; /* 白色文字 */
         }
 
         input[type="number"] {
@@ -66,9 +74,20 @@
     <h3>选择店铺</h3>
     
     <div>
-        <label><input type="radio" name="store" value="JKL" onclick="toggleItems()"> JKL</label>
-        <label><input type="radio" name="store" value="TOM" onclick="toggleItems()"> TOM</label>
-        <label><input type="radio" name="store" value="Ole-Ole" onclick="toggleItems()"> Ole-Ole</label>
+        <label><input type="radio" name="store" value="*JKL*" onclick="toggleItems()"> JKL</label>
+        <label><input type="radio" name="store" value="*TOM*" onclick="toggleItems()"> TOM</label>
+        <label><input type="radio" name="store" value="*Ole-Ole*" onclick="toggleItems()"> Ole-Ole</label>
+    </div>
+
+    <h3>选择目录</h3>
+    <div>
+        <label><input type="radio" name="category" value="BanHeang" onclick="showCategory()"> BanHeang</label>
+        <label><input type="radio" name="category" value="HopHup" onclick="showCategory()"> HopHup</label>
+        <label><input type="radio" name="category" value="Chocolate" onclick="showCategory()"> Chocolate</label>
+        <label><input type="radio" name="category" value="Sotong" onclick="showCategory()"> Sotong</label>
+        <label><input type="radio" name="category" value="Coffee" onclick="showCategory()"> Coffee</label>
+        <label><input type="radio" name="category" value="Amplang" onclick="showCategory()"> Amplang</label>
+        <label><input type="radio" name="category" value="Other" onclick="showCategory()"> Other</label>
     </div>
 
     <h3>选择商品（没输入数量默认是1）</h3>
@@ -76,12 +95,14 @@
     <div id="productList"></div>
 
     <button onclick="generateText()">生成文字</button>
-    <button onclick="copyAndSendWhatsApp()">复制并发送至WhatsApp</button>
+    <button class="whatsapp-button" onclick="copyAndSendWhatsApp()">复制并发送至WhatsApp</button>
 
     <div id="result"></div>
 
     <script>
-        const products = [
+        // 分类商品
+        const categories = {
+            BanHeang: [
             { id: 1, name: "Tambun Original" },
             { id: 2, name: "Tambun Pandan" },
             { id: 3, name: "Tambun White Lotus" },
@@ -103,10 +124,6 @@
             { id: 19, name: "Cheese Crisp" },
             { id: 20, name: "Chic Kut Teh" },
             { id: 21, name: "Ginger Slice" },
-            { id: 22, name: "White Coffee Mini" },
-            { id: 23, name: "White Coffee Mini No Sugar" },
-            { id: 24, name: "Teh Tarik Mini" },
-            { id: 25, name: "Durian White Coffee Mini" },
             { id: 26, name: "Dried Mango" },
             { id: 27, name: "Kacang Tumbuk" },
             { id: 28, name: "Gula Kacang" },
@@ -114,28 +131,146 @@
             { id: 30, name: "Shat Kek Ma" },
             { id: 31, name: "Shat Kek Ma (Brown Sugar)" },
             { id: 32, name: "Coconut Biscuits" },
-            { id: 33, name: "Freeze Dried Durian 50g" },
-            { id: 34, name: "Freeze Dried Mango 50g" },
-            { id: 35, name: "Freeze Dried Strawberry 20g" },
+            { id: 33, name: "BH Freeze Dried Durian 50g" },
+            { id: 34, name: "BH Freeze Dried Mango 50g" },
+            { id: 35, name: "BH Freeze Dried Strawberry 20g" },
             { id: 36, name: "Butter Cookies" },
             { id: 37, name: "Chocolate Cookies" },
             { id: 38, name: "Raisin Cookies" },
             { id: 39, name: "Almond Cookies" },
             { id: 40, name: "Pineapple Tart" },
-            // Add more products here...
-        ];
+            { id: 41, name: "Red Bean Mochi" },
+            { id: 42, name: "Peanut Mochi" },
+            { id: 43, name: "Green Tea Mochi" },
+            { id: 44, name: "Durian Mochi" },
+            { id: 45, name: "Yam Mochi" },
+            { id: 46, name: "Mochi Milk With Yam Filling" },
+            { id: 47, name: "Mochi Milk With Mango Filling" },
+            { id: 48, name: "Mochi Milk With Green Tea" },
+            { id: 51, name: "Satay Fish" },
+            { id: 52, name: "Fillet Cracker With Anchovy" },
+            { id: 53, name: "Fillet Cracker With Seaweed" },
+            { id: 54, name: "Sakura Shrimp" },
+            { id: 60, name: "Frugurt Yogurt - Blueberry" },
+            { id: 61, name: "Frugurt Yogurt - Peach" },
+            { id: 62, name: "Frugurt Yogurt - Mango" },
+            { id: 63, name: "Durian Pudding" },
+            { id: 64, name: "Coconut Pudding" },
+            { id: 65, name: "BH Dodol Durian 150g" },
+            { id: 66, name: "BH Dodol Coconut 150g" },
+            { id: 67, name: "BH Dodol Pandan 150g" },
+            { id: 68, name: "Durian Beh Teh Saw" },
+            { id: 69, name: "Durian Kuih" }
+            ],
+            HopHup: [
+            { id: 70, name: "Musang King Tart" },
+            { id: 71, name: "Mango Tart" },
+            { id: 72, name: "Durian Wafer Roll" },
+            { id: 73, name: "Omelette Durian" },
+            { id: 76, name: "HT Coconut Ori Cookies" },
+            { id: 77, name: "HT Coconut Pandan Cookies" },
+            { id: 78, name: "HT Dodol Kopi" },
+            { id: 79, name: "HT Dodol Durian" },
+            { id: 80, name: "HT Freeze Dried Mango" },
+            { id: 81, name: "HT Freeze Dried Durian" },
+            { id: 82, name: "Salted Egg Fish Skin" },
+            { id: 83, name: "Salted Egg Fish Skin Spicy" },
+            { id: 84, name: "Salted Egg Salmon Skin" },
+            { id: 94, name: "Musang King Durian Candy" }
+            ],
+            Chocolate: [
+            { id: 108, name: "AD Chocolate Durian" },
+            { id: 109, name: "AD Chocolate Sabah Tea" },
+            { id: 110, name: "AD Chocolate Mango" },
+            { id: 111, name: "AD Chocolate Chili" },
+            { id: 112, name: "AD Chocolate Dark" },
+            { id: 113, name: "AD Chocolate Coffee" },
+            { id: 114, name: "AD Chocolate Banana" },
+            { id: 115, name: "AD Chocolate Tiramisu" },
+            { id: 116, name: "AD Chocolate Mint" },
+            { id: 117, name: "AD Chocolate Rambutan" },
+            { id: 118, name: "AD Chocolate Soursup" }
+            ],
+            Sotong: [
+            { id: 85, name: "Cuttlefish Red" },
+            { id: 86, name: "Cuttlefish Lemon" },
+            { id: 87, name: "Cuttlefish Honey" },
+            { id: 88, name: "Cuttlefish Floss Original" },
+            { id: 89, name: "Cuttlefish Massive" },
+            { id: 90, name: "Cuttlefish Whole" },
+            { id: 91, name: "Cuttlefish Roasted" },
+            { id: 92, name: "Cuttlefish Chili" },
+            { id: 93, name: "Five Star Cuttlefish" },
+            { id: 49, name: "BH Sotong Cuttlefish" },
+            { id: 50, name: "BH Gula Cuttlefish" }
+            ],
+            Coffee: [
+            { id: 22, name: "BH White Coffee Mini" },
+            { id: 23, name: "BH White Coffee Mini No Sugar" },
+            { id: 24, name: "BH Teh Tarik Mini" },
+            { id: 25, name: "BH Durian White Coffee Mini" },
+            { id: 55, name: "BH White Coffee" },
+            { id: 56, name: "BH Kopi O 2 in 1" },
+            { id: 57, name: "BH Kopi O No Sugar" },
+            { id: 58, name: "BH Teh Tarik" },
+            { id: 59, name: "BH Durian White Coffee" },
+            { id: 99, name: "Kopi Tenom Silver" },
+            { id: 100, name: "Kopi Tenom Gold" },
+            { id: 101, name: "Kopi Tenom Blue" },
+            { id: 102, name: "Kopi Tenom Green" }
+            ],
+            Amplang: [
+            { id: 96, name: "Amplang Ikan" },
+            { id: 97, name: "Amplang Udang" },
+            { id: 98, name: "Amplang Sotong" }
+            ],
+            Other: [
+            { id: 106, name: "Fruity Gummy Assorted" }
+            ]
+        };
 
-        function loadProducts() {
+        // 记录所有选择的商品
+        let selectedItems = {};
+
+        function loadProducts(products) {
             const productList = document.getElementById('productList');
+            productList.innerHTML = ''; // 清空之前的商品列表
+
             products.forEach(product => {
                 const div = document.createElement('div');
                 div.innerHTML = `
-                    <input type="checkbox" id="item${product.id}" disabled>
+                    <input type="checkbox" id="item${product.id}" onchange="saveItem(${product.id}, '${product.name}')">
                     <label for="item${product.id}">${product.name}</label>
-                    <input type="number" id="quantity${product.id}" min="1" placeholder="数量" disabled>
+                    <input type="number" id="quantity${product.id}" min="1" placeholder="数量" onchange="saveQuantity(${product.id})">
                 `;
                 productList.appendChild(div);
+
+                // 恢复之前选择的状态
+                if (selectedItems[product.id]) {
+                    document.getElementById('item' + product.id).checked = true;
+                    document.getElementById('quantity' + product.id).value = selectedItems[product.id];
+                }
             });
+        }
+
+        // 保存商品选择
+        function saveItem(id, name) {
+            const checkbox = document.getElementById('item' + id);
+            const quantity = document.getElementById('quantity' + id).value || 1;
+
+            if (checkbox.checked) {
+                selectedItems[id] = quantity;
+            } else {
+                delete selectedItems[id]; // 如果取消勾选，就删除该商品
+            }
+        }
+
+        // 保存商品数量
+        function saveQuantity(id) {
+            const quantity = document.getElementById('quantity' + id).value || 1;
+            if (selectedItems[id]) {
+                selectedItems[id] = quantity; // 更新数量
+            }
         }
 
         function toggleItems() {
@@ -152,6 +287,26 @@
             }
         }
 
+        function showCategory() {
+            let selectedCategory = document.querySelector('input[name="category"]:checked');
+            
+            // 检查是否有选中分类
+            if (selectedCategory) {
+                let categoryValue = selectedCategory.value;
+                let productsToShow = categories[categoryValue];
+                
+                if (productsToShow) {
+                    loadProducts(productsToShow); // 根据选择的目录加载商品
+                } else {
+                    console.error("没有找到该分类的商品");
+                }
+            } else {
+                console.error("没有选中任何分类");
+            }
+
+            toggleItems(); // 确保激活商品选择框
+        }
+
         function generateText() {
             let result = '';
             let selectedStore = document.querySelector('input[name="store"]:checked');
@@ -161,17 +316,17 @@
                 result += 'Kedai: 未选择\n';
             }
 
-            products.forEach(product => {
-                let item = document.getElementById('item' + product.id);
-                if (item && item.checked) {
-                    let quantity = document.getElementById('quantity' + product.id).value || 1;
-                    result += product.name + ': ' + quantity + ' Ctn\n';
+            // 遍历所有已选择的产品
+            for (const [id, quantity] of Object.entries(selectedItems)) {
+                const product = Object.values(categories).flat().find(p => p.id == id);
+                if (product) {
+                    result += product.name + ': ' + quantity + ' ctn\n';
                 }
-            });
+            }
 
             result += '\nAirport Stock Order: https://smartprofits.github.io/order/';
             document.getElementById('result').innerText = result;
-            return result; // 返回生成的文本
+            return result;
         }
 
         // 复制并跳转到WhatsApp
@@ -179,7 +334,6 @@
             let text = generateText();
             navigator.clipboard.writeText(text).then(() => {
                 alert('文字已复制，现在跳转到WhatsApp');
-                // WhatsApp 跳转链接，%20表示空格
                 let whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
                 window.location.href = whatsappURL;
             }).catch(err => {
@@ -188,7 +342,6 @@
         }
 
         window.onload = function() {
-            loadProducts();
             toggleItems();
         }
     </script>
