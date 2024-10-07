@@ -11,19 +11,63 @@
             margin: 0;
             background-color: #FBFCFC; /* 柔和的浅灰背景 */
             color: #333; /* 深色字体提升对比度 */
+            transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
         }
-        
 
-        /* 新增的 h1 样式 */
+
+        /* 黑暗模式 */
+        body.dark-mode {
+            background-color: #1c1c1c; /* 深灰色背景 */
+            color: #e0e0e0; /* 浅色字体 */
+        }
+	/* 添加一个容器类来包含目录的label */
+.category-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 每行3列，每列平分宽度 */
+    gap: 10px; /* 项目之间的间距 */
+    margin-bottom: 20px;
+}
+
+        body.dark-mode #result {
+            background-color: #333; /* 黑暗模式下的结果框颜色 */
+            color: #e0e0e0; /* 浅色字体 */
+        }
+
+        body.dark-mode button {
+            background-color: #444; /* 按钮背景颜色 */
+            color: #e0e0e0; /* 按钮字体颜色 */
+        }
+
+        body.dark-mode .whatsapp-button {
+            background-color: #075e54; /* 深色WhatsApp绿色 */
+            color: #e0e0e0; /* 按钮字体颜色 */
+        }
+/* 为每个商品项设置 flexbox 布局 */
+#productList div {
+    display: flex;
+    justify-content: space-between; /* 商品名称和输入框分布两侧 */
+    align-items: center; /* 垂直居中对齐 */
+    margin-bottom: 15px; /* 保持每个商品项之间的间距 */
+}
+
+/* 商品名称部分自适应占据左边空间 */
+#productList label {
+    flex-grow: 1; /* 自动扩展，占据可用空间 */
+    margin-right: 10px; /* 给输入框预留间距 */
+}
+
+/* 调整输入框大小并对齐右边 */
+input[type="number"] {
+    width: 80px;
+    margin-left: 10px;
+    text-align: right; /* 使数字靠右显示 */
+}
+
         h1 {
-            font-size: 2.5rem; /* 设置字体大小 */
-            font-weight: bold; /* 设置字体粗细 */
-            text-align: center; /* 居中对齐 */
-            margin-bottom: 110px; /* 下方留一些空间 */
-        }
-
-        h2, h3 {
-            font-size: 1.4rem;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 110px;
         }
 
         #result {
@@ -35,7 +79,7 @@
             white-space: pre-wrap;
             overflow: auto;
             font-size: 1.1rem;
-            background-color: #fff; /* 结果框为白色背景 */
+            background-color: #fff;
             border-radius: 8px;
         }
 
@@ -68,39 +112,56 @@
         }
 
         input[type="number"] {
-            width: 80px;
+            width: 50px;
             margin-left: 10px;
         }
 
+        /* 切换模式按钮样式 */
+        .toggle-mode-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .contact-info {
+    font-size: 1rem;
+    font-style: italic;
+    color: #555; /* 稍微浅一点的颜色 */
+    text-align: center;
+    background-color: #f9f9f9; /* 柔和的背景色 */
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px; /* 增加与下方内容的间距 */
+    border: 1px solid #ddd; /* 添加浅色边框 */
+}
+
+
         @media (max-width: 768px) {
             h1 {
-                font-size: 2rem; /* 在小屏幕上字体稍微小些 */
-            }
-
-            h2, h3 {
-                font-size: 1.2rem;
-            }
-
-            label, input[type="number"], input[type="checkbox"], button {
-                font-size: 1rem;
+                font-size: 3rem;
             }
 
             body {
-                padding: 10px; /* 移动设备上更小的内边距 */
+                padding: 10px;
             }
 
             button {
-                padding: 10px 15px; /* 按钮在小屏幕上更适配 */
+                padding: 10px 15px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 添加标题 -->
+    <!-- 模式切换按钮 -->
+    <button class="toggle-mode-btn" onclick="toggleDarkMode()">切换至黑暗模式</button>
+
     <h1>Stock Order</h1>
 
     <h3>选择店铺</h3>
-    
     <div>
         <label><input type="radio" name="store" value="*JKL*" onclick="toggleItems()"> JKL</label>
         <label><input type="radio" name="store" value="*TOM*" onclick="toggleItems()"> TOM</label>
@@ -108,18 +169,18 @@
     </div>
 
     <h3>选择目录</h3>
-    <div>
-        <label><input type="radio" name="category" value="BanHeang" onclick="showCategory()"> BanHeang</label>
-        <label><input type="radio" name="category" value="HopHup" onclick="showCategory()"> HopHup</label>
-        <label><input type="radio" name="category" value="Chocolate" onclick="showCategory()"> Chocolate</label>
-        <label><input type="radio" name="category" value="Sotong" onclick="showCategory()"> Sotong</label>
-        <label><input type="radio" name="category" value="Coffee" onclick="showCategory()"> Coffee</label>
-        <label><input type="radio" name="category" value="Amplang" onclick="showCategory()"> Amplang</label>
-        <label><input type="radio" name="category" value="Other" onclick="showCategory()"> Other</label>
-    </div>
+<div class="category-container">
+    <label><input type="radio" name="category" value="BanHeang" onclick="showCategory()">BanHeang</label>
+    <label><input type="radio" name="category" value="HopHup" onclick="showCategory()">HopHup</label>
+    <label><input type="radio" name="category" value="Chocolate" onclick="showCategory()">Chocolate</label>
+    <label><input type="radio" name="category" value="Sotong" onclick="showCategory()">Sotong</label>
+    <label><input type="radio" name="category" value="Coffee" onclick="showCategory()">Coffee</label>
+    <label><input type="radio" name="category" value="Amplang" onclick="showCategory()">Amplang</label>
+    <label><input type="radio" name="category" value="Other" onclick="showCategory()">Other</label>
+</div>
+
 
     <h3>选择商品（没输入数量默认是1）</h3>
-
     <div id="productList"></div>
 
     <button onclick="generateText()">生成文字</button>
@@ -155,7 +216,7 @@
                 { id: 26, name: "Dried Mango" },
                 { id: 27, name: "Kacang Tumbuk" },
                 { id: 28, name: "Gula Kacang" },
-                { id: 29, name: "Black Sesame Peanut Candy" },
+                { id: 29, name: "Black Sesame Peanut" },
                 { id: 30, name: "Shat Kek Ma" },
                 { id: 31, name: "Shat Kek Ma (Brown Sugar)" },
                 { id: 32, name: "Coconut Biscuits" },
@@ -171,9 +232,9 @@
                 { id: 43, name: "Green Tea Mochi" },
                 { id: 44, name: "Durian Mochi" },
                 { id: 45, name: "Yam Mochi" },
-                { id: 46, name: "Mochi Milk With Yam Filling" },
-                { id: 47, name: "Mochi Milk With Mango Filling" },
-                { id: 48, name: "Mochi Milk With Green Tea" },
+                { id: 46, name: "Mochi Milk Yam Filling" },
+                { id: 47, name: "Mochi Milk Mango Filling" },
+                { id: 48, name: "Mochi Milk Green Tea" },
                 { id: 51, name: "Satay Fish" },
                 { id: 52, name: "Fillet Cracker With Anchovy" },
                 { id: 53, name: "Fillet Cracker With Seaweed" },
@@ -354,7 +415,7 @@
                 }
             }
 
-            result += '\nAirport Stock Order: https://smartprofits.github.io/order/';
+            result += '\nAirport Stock Order: smartprofits.github.io/order/';
             document.getElementById('result').innerText = result;
             return result;
         }
@@ -370,9 +431,30 @@
             });
         }
 
+        // 检查是否已经选择了模式，并设置默认模式
         window.onload = function() {
-            toggleItems();
+            const savedMode = localStorage.getItem('dark-mode');
+            if (savedMode === 'enabled') {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.toggle-mode-btn').textContent = '切换至正常模式';
+            }
+            toggleItems(); // 初始化商品选择框
+        }
+
+        function toggleDarkMode() {
+            const isDarkModeEnabled = document.body.classList.toggle('dark-mode');
+            const toggleButton = document.querySelector('.toggle-mode-btn');
+
+            if (isDarkModeEnabled) {
+                toggleButton.textContent = 'Light Mode🌞';
+                localStorage.setItem('dark-mode', 'enabled');
+            } else {
+                toggleButton.textContent = 'Dark Mode🌙';
+                localStorage.setItem('dark-mode', 'disabled');
+            }
         }
     </script>
+<p class="contact-info">If you have any questions or need to add new products, please contact me (Mark).</p>
+    
 </body>
 </html>
