@@ -56,6 +56,27 @@
     margin-right: 10px; /* 给输入框预留间距 */
 }
 
+#suggestions {
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: white;
+    position: absolute;
+    width: 170px;
+    z-index: 10;
+}
+
+#suggestions div {
+    padding: 8px;
+    cursor: pointer;
+    color: #333; /* 设置字体颜色为深灰色 */
+}
+
+#suggestions div:hover {
+    background-color: #f0f0f0;
+}
+
+
 /* 调整输入框大小并对齐右边 */
 input[type="number"] {
     width: 80px;
@@ -168,7 +189,9 @@ input[type="number"] {
         <label><input type="radio" name="store" value="*Ole-Ole*" onclick="toggleItems()"> Ole-Ole</label>
     </div>
 
-    <h3>选择目录</h3>
+    <h3>选择目录</h3> <input type="text" id="productSearch" placeholder="搜索商品..." oninput="searchProduct()" autocomplete="off">
+<div id="suggestions"></div> <!-- 用于显示自动补全的结果 -->
+
 <div class="category-container">
     <label><input type="radio" name="category" value="BanHeang" onclick="showCategory()">BanHeang</label>
     <label><input type="radio" name="category" value="HopHup" onclick="showCategory()">HopHup</label>
@@ -267,17 +290,17 @@ input[type="number"] {
                 { id: 94, name: "Musang King Durian Candy" }
             ],
             Chocolate: [
-                { id: 108, name: "AD Chocolate Durian" },
-                { id: 109, name: "AD Chocolate Sabah Tea" },
-                { id: 110, name: "AD Chocolate Mango" },
-                { id: 111, name: "AD Chocolate Chili" },
-                { id: 112, name: "AD Chocolate Dark" },
-                { id: 113, name: "AD Chocolate Coffee" },
-                { id: 114, name: "AD Chocolate Banana" },
-                { id: 115, name: "AD Chocolate Tiramisu" },
-                { id: 116, name: "AD Chocolate Mint" },
-                { id: 117, name: "AD Chocolate Rambutan" },
-                { id: 118, name: "AD Chocolate Soursup" }
+                { id: 108, name: "AD Chocolate Durian", unit: 'pc'},
+                { id: 109, name: "AD Chocolate Sabah Tea", unit: 'pc'},
+                { id: 110, name: "AD Chocolate Mango", unit: 'pc'},
+                { id: 111, name: "AD Chocolate Chili", unit: 'pc'},
+                { id: 112, name: "AD Chocolate Dark", unit: 'pc'},
+                { id: 113, name: "AD Chocolate Coffee", unit: 'pc'},
+                { id: 114, name: "AD Chocolate Banana", unit: 'pc'},
+                { id: 115, name: "AD Chocolate Tiramisu", unit: 'pc'},
+                { id: 116, name: "AD Chocolate Mint", unit: 'pc'},
+                { id: 117, name: "AD Chocolate Rambutan", unit: 'pc'},
+                { id: 118, name: "AD Chocolate Soursup", unit: 'pc'}
             ],
             Sotong: [
                 { id: 85, name: "Cuttlefish Red" },
@@ -398,27 +421,30 @@ input[type="number"] {
             toggleItems(); // 确保激活商品选择框
         }
 
-        function generateText() {
-            let result = '';
-            let selectedStore = document.querySelector('input[name="store"]:checked');
-            if (selectedStore) {
-                result += 'Kedai: ' + selectedStore.value + '\n\n';
-            } else {
-                result += 'Kedai: 未选择\n';
-            }
+function generateText() {
+    let result = '';
+    let selectedStore = document.querySelector('input[name="store"]:checked');
+    if (selectedStore) {
+        result += 'Kedai: ' + selectedStore.value + '\n\n';
+    } else {
+        result += 'Kedai: 未选择\n';
+    }
 
-            // 遍历所有已选择的产品
-            for (const [id, quantity] of Object.entries(selectedItems)) {
-                const product = Object.values(categories).flat().find(p => p.id == id);
-                if (product) {
-                    result += product.name + ' - ' + quantity + ' ctn\n';
-                }
-            }
-
-            result += '\nAirport Stock Order: smartprofits.github.io/order/';
-            document.getElementById('result').innerText = result;
-            return result;
+    // 遍历所有已选择的产品
+    for (const [id, quantity] of Object.entries(selectedItems)) {
+        const product = Object.values(categories).flat().find(p => p.id == id);
+        if (product) {
+            // 根据商品的 unit 属性决定是显示 "pc" 还是 "ctn"
+            const unit = product.unit === 'pc' ? 'pc' : 'ctn';
+            result += product.name + ' - ' + quantity + ' ' + unit + '\n';
         }
+    }
+
+    result += '\nAirport Stock Order: smartprofits.github.io/order/';
+    document.getElementById('result').innerText = result;
+    return result;
+}
+
 
         function copyAndSendWhatsApp() {
             let text = generateText();
@@ -453,6 +479,54 @@ input[type="number"] {
                 localStorage.setItem('dark-mode', 'disabled');
             }
         }
+function searchProduct() {
+    const searchText = document.getElementById('productSearch').value.toLowerCase();
+    const suggestionsContainer = document.getElementById('suggestions');
+    suggestionsContainer.innerHTML = ''; // 清空之前的建议
+
+    if (searchText.length === 0) return; // 如果没有输入，不显示建议
+
+    // 获取所有分类中的商品
+    const allProducts = Object.values(categories).flat();
+
+    // 根据输入的内容筛选出匹配的商品
+    const matchingProducts = allProducts.filter(product => product.name.toLowerCase().includes(searchText));
+
+    // 显示匹配的商品作为建议
+    matchingProducts.forEach(product => {
+        const div = document.createElement('div');
+        div.textContent = product.name;
+        div.onclick = () => selectProduct(product); // 点击建议后选择该商品
+        suggestionsContainer.appendChild(div);
+    });
+}
+
+function selectProduct(product) {
+    const productSearch = document.getElementById('productSearch');
+    
+    // 清空搜索框内容
+    productSearch.value = '';
+
+    // 清空之前的商品列表（用户第二次选择时删除之前的内容）
+    const productList = document.getElementById('productList');
+    productList.innerHTML = ''; // 清空之前选择的商品
+
+    // 创建新的商品选择框
+    const div = document.createElement('div');
+    div.innerHTML = `
+        <input type="checkbox" id="item${product.id}" checked onchange="saveItem(${product.id}, '${product.name}')">
+        <label for="item${product.id}">${product.name}</label>
+        <input type="number" id="quantity${product.id}" min="1" value="1" onchange="saveQuantity(${product.id})">
+    `;
+    productList.appendChild(div);
+    
+    // 保存新选择的商品
+    saveItem(product.id, product.name);
+    
+    // 清空建议
+    document.getElementById('suggestions').innerHTML = '';
+}
+
     </script>
 <p class="contact-info">If you have any questions or need to add new products, please contact me (Mark).</p>
     
