@@ -288,7 +288,7 @@ input[type="number"] {
                 { id: 83, name: "Salted Egg Fish Skin Spicy" },
                 { id: 84, name: "Salted Egg Salmon Skin" },
                 { id: 94, name: "Musang King Durian Candy" },
-                { id: 126, name: "HT Dried Fruit Mango 📌" }
+                { id: 126, name: "HT Dried Fruit Mango " }
             ],
             Chocolate: [
                 { id: 108, name: "AD Chocolate Durian", unit: 'pc'},
@@ -302,6 +302,8 @@ input[type="number"] {
                 { id: 116, name: "AD Chocolate Mint", unit: 'pc'},
                 { id: 117, name: "AD Chocolate Rambutan", unit: 'pc'},
                 { id: 118, name: "AD Chocolate Soursup", unit: 'pc'}
+                { id: 127, name: "AD Chocolate Coconut", unit: 'pc'}
+                { id: 128, name: "AD Chocolate Mangosteen", unit: 'pc'}
             ],
             Sotong: [
                 { id: 85, name: "Cuttlefish Red" },
@@ -332,7 +334,7 @@ input[type="number"] {
                 { id: 100, name: "Kopi Tenom Gold" },
                 { id: 101, name: "Kopi Tenom Blue" },
                 { id: 102, name: "Kopi Tenom Green" },
-                { id: 125, name: "Kopi Tenom Red 📌" }
+                { id: 125, name: "Kopi Tenom Red " }
             ],
             Amplang: [
                 { id: 96, name: "Amplang Ikan" },
@@ -439,7 +441,7 @@ function generateText() {
         const product = Object.values(categories).flat().find(p => p.id == id);
         if (product) {
             // 根据商品的 unit 属性决定是显示 "pc" 还是 "ctn"
-            const unit = product.unit === 'pc' ? 'pc' : 'ctn';
+            const unit = product.unit === 'pc' ? 'pc' : '📦';
             result += product.name + ' - ' + quantity + ' ' + unit + '\n';
         }
     }
