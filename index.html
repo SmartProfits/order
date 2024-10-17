@@ -440,16 +440,20 @@ function generateText() {
     for (const [id, quantity] of Object.entries(selectedItems)) {
         const product = Object.values(categories).flat().find(p => p.id == id);
         if (product) {
-            // 根据商品的 unit 属性决定是显示 "pc" 还是 "ctn"
-            const unit = product.unit === 'pc' ? 'pc' : '📦';
+            const unit = product.unit === 'pc' ? 'pc' : 'ctn';
             result += product.name + ' - ' + quantity + ' ' + unit + '\n';
         }
     }
 
     result += '\nAirport Stock Order: smartprofits.github.io/order/';
     document.getElementById('result').innerText = result;
+
+    // 清空商品列表
+    document.getElementById('productList').innerHTML = '';
+
     return result;
 }
+
 
 
         function copyAndSendWhatsApp() {
