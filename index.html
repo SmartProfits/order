@@ -307,6 +307,10 @@
     <span style="--i:4;"></span>
   </div>
 </div>
+<div>
+    <input type="checkbox" id="addOnCheckbox" />
+    <label for="addOnCheckbox">Add On</label>
+</div>
 
 		<h3>选择店铺</h3>
 		<div>
@@ -572,31 +576,37 @@
 			        }
 
 			function generateText() {
-			    let result = '';
-			    let selectedStore = document.querySelector('input[name="store"]:checked');
-			    if (selectedStore) {
-			        result += 'Kedai: ' + selectedStore.value + '\n\n';
-			    } else {
-			        result += 'Kedai: 未选择\n';
-			    }
+    let result = '';
+    let selectedStore = document.querySelector('input[name="store"]:checked');
+    let hasAddOn = document.getElementById('addOnCheckbox').checked;
 
-			    // 遍历所有已选择的产品
-			    for (const [id, quantity] of Object.entries(selectedItems)) {
-			        const product = Object.values(categories).flat().find(p => p.id == id);
-			        if (product) {
-			            const unit = product.unit === 'pc' ? 'pc' : 'ctn';
-			            result += product.name + ' - ' + quantity + ' ' + unit + '\n';
-			        }
-			    }
+    if (selectedStore) {
+        result += 'Kedai: ' + selectedStore.value;
+        if (hasAddOn) {
+            result += ' 💥Add On💥';
+        }
+        result += '\n\n';
+    } else {
+        result += 'Kedai: 未选择\n';
+    }
 
-			    result += '\nAirport Stock Order: smartprofits.github.io/order/';
-			    document.getElementById('result').innerText = result;
+    // 遍历所有已选择的产品
+    for (const [id, quantity] of Object.entries(selectedItems)) {
+        const product = Object.values(categories).flat().find(p => p.id == id);
+        if (product) {
+            const unit = product.unit === 'pc' ? 'pc' : 'ctn';
+            result += product.name + ' - ' + quantity + ' ' + unit + '\n';
+        }
+    }
 
-			    // 清空商品列表
-			    document.getElementById('productList').innerHTML = '';
+    result += '\nAirport Stock Order: smartprofits.github.io/order/';
+    document.getElementById('result').innerText = result;
 
-			    return result;
-			}
+    // 清空商品列表
+    document.getElementById('productList').innerHTML = '';
+
+    return result;
+}
 
 
 
