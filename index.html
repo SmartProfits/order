@@ -586,6 +586,7 @@
     let selectedStore = document.querySelector('input[name="store"]:checked');
     let hasAddOn = document.getElementById('addOnCheckbox').checked;
 
+    // 添加店铺信息
     if (selectedStore) {
         result += 'Kedai: ' + selectedStore.value;
         if (hasAddOn) {
@@ -596,12 +597,38 @@
         result += 'Kedai: 未选择\n';
     }
 
-    // 遍历所有已选择的产品
+    // 按分类整理已选商品
+    const categorizedItems = {};
+    
+    // 初始化所有分类
+    Object.keys(categories).forEach(category => {
+        categorizedItems[category] = [];
+    });
+
+    // 将选中的商品按分类整理
     for (const [id, quantity] of Object.entries(selectedItems)) {
-        const product = Object.values(categories).flat().find(p => p.id == id);
-        if (product) {
-            const unit = product.unit === 'pc' ? 'pc' : 'ctn';
-            result += product.name + ' - ' + quantity + ' ' + unit + '\n';
+        // 查找商品所属的分类
+        for (const [category, products] of Object.entries(categories)) {
+            const product = products.find(p => p.id == id);
+            if (product) {
+                const unit = product.unit === 'pc' ? 'pc' : 'ctn';
+                categorizedItems[category].push({
+                    name: product.name,
+                    quantity: quantity,
+                    unit: unit
+                });
+                break;
+            }
+        }
+    }
+
+    // 按分类输出商品
+    for (const [category, items] of Object.entries(categorizedItems)) {
+        if (items.length > 0) {
+            result += `\n=== ${category} ===\n`;
+            items.forEach(item => {
+                result += `${item.name} - ${item.quantity} ${item.unit}\n`;
+            });
         }
     }
 
