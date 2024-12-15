@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Airport Stock Request</title>
@@ -316,7 +317,7 @@ input[type="number"] {
 }
 
 input[type="number"] {
-    width: 50px;
+    width: 25px;
     height: 30px;
     text-align: center;
     margin: 0 5px;
@@ -435,6 +436,46 @@ input[type="number"] {
 
     <div id="result"></div>
         <script>
+         const SHEET_ID = '你的表格ID';
+const SHEET_NAME = 'Sheet1'; // 如果你的表格页面名称不是 Sheet1，请修改这里
+
+function loadQuantitiesFromSheet() {
+    const SHEET_ID = '1QUB8R0-gtwNhdiPYU2rwFf_UKrGyyqCQHzIQ7AxKFLI';
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+    
+    fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            try {
+                const jsonData = JSON.parse(data.substr(47).slice(0, -2));
+                const rows = jsonData.table.rows;
+                
+                // 创建一个映射来存储商品名称和库存数量
+                const stockMap = {};
+                rows.forEach(row => {
+                    if(row.c[0] && row.c[1]) {
+                        const productName = row.c[0].v;
+                        const stockQuantity = row.c[1].v;
+                        stockMap[productName] = stockQuantity;
+                    }
+                });
+
+                // 更新所有商品标签显示库存数量
+                const labels = document.querySelectorAll('#productList label');
+                labels.forEach(label => {
+                    const productName = label.textContent;
+                    const stock = stockMap[productName];
+                    if (stock !== undefined) {
+                        // 在商品名称后添加库存数量
+                        label.innerHTML = `${productName} <span style="color: #666; font-size: 1em;">(Stock:${stock})</span>`;
+                    }
+                });
+            } catch (error) {
+                console.error('解析数据错误:', error);
+            }
+        })
+        .catch(error => console.error('获取数据失败:', error));
+}
         // 分类商品
 			        const categories = {
     BanHeang: [
@@ -605,7 +646,7 @@ input[type="number"] {
                     document.getElementById('item' + product.id).checked = true;
                     document.getElementById('quantity' + product.id).value = selectedItems[product.id];
                 }
-            });
+            });r
         }
 
         function saveItem(id, name) {
@@ -880,12 +921,40 @@ window.onload = function() {
         }
     }, { once: true }); // 使用 once 选项确保事件监听器只执行一次
 }
+function loadProducts(products) {
+    const productList = document.getElementById('productList');
+    productList.innerHTML = '';
+
+    products.forEach(product => {
+        const div = document.createElement('div');
+        const isChecked = selectedItems[product.id] ? 'checked' : '';
+        
+        div.innerHTML = `
+            <input type="checkbox" id="item${product.id}" ${isChecked} onchange="saveItem(${product.id}, '${product.name}')">
+            <label for="item${product.id}">${product.name}</label>
+            <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+            <input type="number" 
+                   id="quantity${product.id}" 
+                   min="1" 
+                   value="${selectedItems[product.id] || 1}" 
+                   readonly>
+            <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+        `;
+        productList.appendChild(div);
+    });
+
+    // 加载并显示库存数量
+    loadQuantitiesFromSheet();
+}
     </script>
 
 <p class="contact-info">
     🎅 If you have any questions or need to add new products, please contact me (Mark). 
     <br>
     🎁 Merry Christmas and Happy New Year! 🎄
+    <br>
+    
+
 </p>
 </body>
 </html>
