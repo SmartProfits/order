@@ -1,960 +1,948 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Airport Stock Request</title>
-    <style>
-    
-    
-        /* 圣诞主题颜色变量 */
-        :root {
-            --christmas-red: #c41e3a;
-            --christmas-green: #165b33;
-            --christmas-gold: #ffd700;
-            --snow-white: #fff;
-        }
-        
-
-      .snowflake {
-    color: rgba(255, 255, 255, 0.6); /* 降低雪花不透明度 */
-    font-size: 1.2em; /* 稍微减小雪花大小 */
-    font-family: Arial, sans-serif;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.1); /* 柔化阴影 */
-    position: fixed;
-    z-index: -1; /* 将雪花置于内容之后 */
-    pointer-events: none;
-    animation: fall linear infinite;
-    will-change: transform; /* 优化动画性能 */
-}
-
-@keyframes fall {
-    0% {
-        top: -10%;
-        transform: translateX(0) rotate(0deg);
-        opacity: 0.8;
-    }
-    20% {
-        transform: translateX(15px) rotate(45deg);
-        opacity: 0.9;
-    }
-    40% {
-        transform: translateX(-15px) rotate(-45deg);
-        opacity: 0.8;
-    }
-    60% {
-        transform: translateX(15px) rotate(45deg);
-        opacity: 0.7;
-    }
-    80% {
-        transform: translateX(-15px) rotate(-45deg);
-        opacity: 0.6;
-    }
-    100% {
-        top: 110%;
-        transform: translateX(0) rotate(0deg);
-        opacity: 0.5;
-    }
-}
-
-/* 调整雪花动画时间和延迟，使其更加自然 */
-.snowflake:nth-child(1) { left: 5%; animation-duration: 15s; animation-delay: -2s; }
-.snowflake:nth-child(2) { left: 15%; animation-duration: 12s; animation-delay: -1s; }
-.snowflake:nth-child(3) { left: 25%; animation-duration: 13s; animation-delay: -3s; }
-.snowflake:nth-child(4) { left: 35%; animation-duration: 14s; animation-delay: -4s; }
-.snowflake:nth-child(5) { left: 45%; animation-duration: 16s; animation-delay: -5s; }
-.snowflake:nth-child(6) { left: 55%; animation-duration: 13s; animation-delay: -6s; }
-.snowflake:nth-child(7) { left: 65%; animation-duration: 15s; animation-delay: -7s; }
-.snowflake:nth-child(8) { left: 75%; animation-duration: 14s; animation-delay: -2s; }
-.snowflake:nth-child(9) { left: 85%; animation-duration: 12s; animation-delay: -3s; }
-.snowflake:nth-child(10) { left: 95%; animation-duration: 13s; animation-delay: -4s; }
-
-
-/* 减少雪花数量，只保留10个 */
-       
-
-        body {
-            font-family: Arial, sans-serif;
-            padding: 15px;
-            margin: 0;
-            background-color: #0a2818;
-            color: var(--snow-white);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        /* 圣诞装饰 */
-        .christmas-decorations {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .christmas-tree {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            font-size: 40px;
-            z-index: 1000;
-        }
-
-       
-
-        .category-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        #productList div {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--christmas-gold);
-        }
-
-        #suggestions {
-            border: 1px solid var(--christmas-gold);
-            max-height: 150px;
-            overflow-y: auto;
-            background-color: rgba(255, 255, 255, 0.9);
-            position: absolute;
-            width: 220px;
-            z-index: 10;
-            border-radius: 4px;
-        }
-
-        #suggestions div {
-            padding: 8px;
-            cursor: pointer;
-            color: var(--christmas-green);
-        }
-
-        #suggestions div:hover {
-            background-color: var(--christmas-red);
-            color: var(--snow-white);
-        }
-
-        input[type="number"] {
-            width: 60px;
-            margin: 0 10px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid var(--christmas-gold);
-            border-radius: 4px;
-            padding: 5px;
-        }
-
-        #productSearch {
-            width: 210px;
-            padding: 8px;
-            font-size: 1.2rem;
-            border-radius: 5px;
-            border: 2px solid var(--christmas-gold);
-            background: rgba(255, 255, 255, 0.9);
-        }
-        
-        
-
-        h1 {
-            font-size: 4rem;
-            font-weight: bold;
-            text-align: center;
-            color: var(--christmas-red);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin: 20px 0;
-        }
-
-        #result {
-            width: 100%;
-            height: 150px;
-            border: 2px solid var(--christmas-gold);
-            padding: 10px;
-            margin-top: 10px;
-            white-space: pre-wrap;
-            overflow: auto;
-            font-size: 1.1rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: var(--snow-white);
-        }
-
-        button {
-            padding: 12px 18px;
-            font-size: 1.1rem;
-            margin: 10px 0;
-            cursor: pointer;
-            width: 100%;
-            border: none;
-            border-radius: 8px;
-            background-color: var(--christmas-red);
-            color: var(--snow-white);
-            border: 2px solid var(--christmas-gold);
-            transition: all 0.3s ease;
-        }
-
-        button:hover {
-            transform: scale(1.02);
-            background-color: #a01830;
-        }
-
-        .whatsapp-button {
-            background-color: #25D366;
-        }
-
-        
-        .contact-info {
-            font-size: 1rem;
-            font-style: italic;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border: 1px solid var(--christmas-gold);
-        }
-
-       .quantity-control {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-.music-toggle-btn {
-    background-color: var(--christmas-red);
-    color: var(--snow-white);
-    padding: 10px 20px;
-    margin: 10px 0;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    border: 2px solid var(--christmas-gold);
-    transition: all 0.3s ease;
-    width: 100%;
-}
-
-.music-toggle-btn:hover {
-    transform: scale(1.02);
-    background-color: #a01830;
-}
-
-#productList div {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.quantity-btn {
-    width: 30px;
-    height: 30px;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--christmas-red);
-    color: var(--snow-white);
-    border: 1px solid var(--christmas-gold);
-    padding: 0;
-    line-height: 1;
-}
-
-input[type="number"] {
-    width: 50px;
-    height: 30px;
-    text-align: center;
-    margin: 0 5px;
-    padding: 0 5px;
-    border: 1px solid var(--christmas-gold);
-    border-radius: 4px;
-}
-
-/* 确保复选框和标签的对齐 */
-#productList input[type="checkbox"] {
-    margin: 0;
-    vertical-align: middle;
-}
-
-#productList label {
-    margin-right: auto;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-#productList div {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.quantity-btn {
-    width: 30px;
-    height: 30px;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--christmas-red);
-    color: var(--snow-white);
-    border: 1px solid var(--christmas-gold);
-    padding: 0;
-    line-height: 1;
-}
-
-input[type="number"] {
-    width: 25px;
-    height: 30px;
-    text-align: center;
-    margin: 0 5px;
-    padding: 0 5px;
-    border: 1px solid var(--christmas-gold);
-    border-radius: 4px;
-}
-
-/* 确保复选框和标签的对齐 */
-#productList input[type="checkbox"] {
-    margin: 0;
-    vertical-align: middle;
-}
-
-#productList label {
-    margin-right: auto;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-        .quantity-btn:hover {
-            transform: scale(1.1);
-            background-color: #a01830;
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            body { padding: 10px; }
-            button { padding: 10px 15px; }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- 添加雪花效果 -->
-<div class="snowflakes" aria-hidden="true">
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    <div class="snowflake">❅</div>
-    <div class="snowflake">❆</div>
-    
-</div>
-
-
-<!-- 添加新的音频控制 -->
-<audio id="backgroundMusic" loop>
-    <source src="https://github.com/SmartProfits/orderpro/raw/refs/heads/main/1.mp3" type="audio/mpeg">
-</audio>
-<button id="musicToggle" class="music-toggle-btn" onclick="toggleMusic()">
-    🔇 关闭音乐
-</button>
-<div style="text-align: center; margin-top: 5px; font-size: 0.9em; color: var(--snow-white);">
-    提示：点击页面任意位置开始播放背景音乐
-</div>
-<h1>🎄Stock Order🎄</h1>
-    
-    
-    
-    <div class="container">
-        <div class="loader">
-            <span style="--i:0;"></span>
-            <span style="--i:1;"></span>
-            <span style="--i:2;"></span>
-            <span style="--i:3;"></span>
-            <span style="--i:4;"></span>
-        </div>
-    </div>
-
-    <div>
-        <input type="checkbox" id="addOnCheckbox" />
-        <label for="addOnCheckbox">Add On</label>
-    </div>
-
-    <h3>选择店铺</h3>
-    <div>
-        <label><input type="radio" name="store" value="*JKL*" onclick="toggleItems()" /> JKL</label>
-        <label><input type="radio" name="store" value="*TOM*" onclick="toggleItems()" /> TOM</label>
-        <label><input type="radio" name="store" value="*Ole-Ole*" onclick="toggleItems()" /> Ole-Ole</label>
-    </div>
-
-    <h3>选择目录</h3>
-    <div class="category-container">
-        <label><input type="radio" name="category" value="BanHeang" onclick="showCategory()" />BanHeang</label>
-        <label><input type="radio" name="category" value="HopHup" onclick="showCategory()" />HopHup</label>
-        <label><input type="radio" name="category" value="Chocolate" onclick="showCategory()" />Chocolate</label>
-        <label><input type="radio" name="category" value="Sotong" onclick="showCategory()" />Sotong</label>
-        <label><input type="radio" name="category" value="Coffee" onclick="showCategory()" />Coffee</label>
-        <label><input type="radio" name="category" value="Amplang" onclick="showCategory()" />Amplang</label>
-        <label><input type="radio" name="category" value="Other" onclick="showCategory()" />Other</label>
-    </div>
-
-    <input type="text" id="productSearch" placeholder="搜索商品..." oninput="searchProduct()" autocomplete="off" />
-    <div id="suggestions"></div>
-    <h3>选择商品（没输入数量默认是1）</h3>
-    <div id="productList"></div>
-
-    <button onclick="generateText()">生成文字</button>
-    <button class="whatsapp-button" onclick="copyAndSendWhatsApp()">复制并发送至WhatsApp</button>
-
-    <div id="result"></div>
-        <script>
-         const SHEET_ID = '你的表格ID';
-const SHEET_NAME = 'Sheet1'; // 如果你的表格页面名称不是 Sheet1，请修改这里
-
-function loadQuantitiesFromSheet() {
-    const SHEET_ID = '1QUB8R0-gtwNhdiPYU2rwFf_UKrGyyqCQHzIQ7AxKFLI';
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
-    
-    fetch(url)
-        .then(response => response.text())
-        .then(data => {
-            try {
-                const jsonData = JSON.parse(data.substr(47).slice(0, -2));
-                const rows = jsonData.table.rows;
-                
-                // 创建一个映射来存储商品名称和库存数量
-                const stockMap = {};
-                rows.forEach(row => {
-                    if(row.c[0] && row.c[1]) {
-                        const productName = row.c[0].v;
-                        const stockQuantity = row.c[1].v;
-                        stockMap[productName] = stockQuantity;
-                    }
-                });
-
-                // 更新所有商品标签显示库存数量
-                const labels = document.querySelectorAll('#productList label');
-                labels.forEach(label => {
-                    const productName = label.textContent;
-                    const stock = stockMap[productName];
-                    if (stock !== undefined) {
-                        // 在商品名称后添加库存数量
-                        label.innerHTML = `${productName} <span style="color: #666; font-size: 1em;">(Stock:${stock})</span>`;
-                    }
-                });
-            } catch (error) {
-                console.error('解析数据错误:', error);
-            }
-        })
-        .catch(error => console.error('获取数据失败:', error));
-}
-        // 分类商品
-			        const categories = {
-    BanHeang: [
-        { id: 101, name: "BH Tambun Original" },
-        { id: 102, name: "BH Tambun Pandan" },
-        { id: 103, name: "BH Tambun White Lotus" },
-        { id: 104, name: "BH Tau Sar Pheah" },
-        { id: 105, name: "BH Heong Pheah" },
-        { id: 106, name: "BH Beh Teh Saw" },
-        { id: 107, name: "BH Phong Pheah" },
-        { id: 108, name: "BH Pepper Biscuit" },
-        { id: 109, name: "BH Hup Toh Soh" },
-        { id: 110, name: "BH Omlette Crisp Chocolate" },
-        { id: 111, name: "BH Omlette Crisp Pandan" },
-        { id: 112, name: "BH Kai Chai Biscuit" },
-        { id: 113, name: "BH Almond Slice" },
-        { id: 114, name: "BH Almond Slice Salted Egg" },
-        { id: 115, name: "BH Durian Crisp" },
-        { id: 116, name: "BH Coconut Crisp" },
-        { id: 117, name: "BH Salted Fish Crisp" },
-        { id: 118, name: "BH Salted Egg Crisp" },
-        { id: 119, name: "BH Cheese Crisp" },
-        { id: 120, name: "BH Chic Kut Teh" },
-        { id: 121, name: "BH Ginger Slice" },
-        { id: 122, name: "BH Dried Mango" },
-        { id: 123, name: "BH Kacang Tumbuk" },
-        { id: 124, name: "BH Gula Kacang" },
-        { id: 125, name: "BH Black Sesame Peanut" },
-        { id: 126, name: "BH Shat Kek Ma" },
-        { id: 127, name: "BH Shat Kek Ma (Brown Sugar)" },
-        { id: 128, name: "BH Coconut Biscuits" },
-        { id: 129, name: "BH FD Durian 50g" },
-        { id: 130, name: "BH FD Mango 50g" },
-        { id: 131, name: "BH FD Durian 30g" },
-        { id: 132, name: "BH Butter Cookies" },
-        { id: 133, name: "BH Chocolate Cookies" },
-        { id: 134, name: "BH Raisin Cookies" },
-        { id: 135, name: "BH Almond Cookies" },
-        { id: 136, name: "BH Pineapple Tart" },
-        { id: 137, name: "BH Red Bean Mochi" },
-        { id: 138, name: "BH Peanut Mochi" },
-        { id: 139, name: "BH Green Tea Mochi" },
-        { id: 140, name: "BH Durian Mochi" },
-        { id: 141, name: "BH Yam Mochi" },
-        { id: 142, name: "BH Mochi Milk Yam Filling" },
-        { id: 143, name: "BH Mochi Milk Mango Filling" },
-        { id: 144, name: "BH Mochi Milk Green Tea" },
-        { id: 145, name: "BH Sotong Cuttlefish" },
-        { id: 146, name: "BH Gula Cuttlefish" },
-        { id: 147, name: "BH Satay Fish" },
-        { id: 148, name: "BH Fillet Cracker With Anchovy" },
-        { id: 149, name: "BH Fillet Cracker With Seaweed" },
-        { id: 150, name: "BH Sakura Shrimp" },
-        { id: 151, name: "BH Frugurt Yogurt Blueberry" },
-        { id: 152, name: "BH Frugurt Yogurt Peach" },
-        { id: 153, name: "BH Frugurt Yogurt Mango" },
-        { id: 154, name: "BH Durian Pudding" },
-        { id: 155, name: "BH Coconut Pudding" },
-        { id: 156, name: "BH Dodol Durian" },
-        { id: 157, name: "BH Dodol Coconut" },
-        { id: 158, name: "BH Dodol Pandan" },
-        { id: 159, name: "BH Durian Beh Teh Saw" }
-    ],
-    HopHup: [
-        { id: 201, name: "HT Durian Tart" },
-        { id: 202, name: "HT Mango Tart" },
-        { id: 203, name: "HT Durian Wafer Roll" },
-        { id: 204, name: "HT Mango Wafer Roll🆕" },
-        { id: 205, name: "HT Omelette Durian" },
-        { id: 206, name: "HT Coconut Ori Cookies" },
-        { id: 207, name: "HT Coconut Pandan Cookies" },
-        { id: 208, name: "HT Dodol Original🆕" },
-        { id: 209, name: "HT Dodol Kopi" },
-        { id: 210, name: "HT Dodol Durian" },
-        { id: 211, name: "HT Freeze Dried Mango" },
-        { id: 212, name: "HT Freeze Dried Durian" },
-        { id: 213, name: "Salted Egg Fish Skin" },
-        { id: 214, name: "Salted Egg Fish Skin Spicy" },
-        { id: 215, name: "Salted Egg Salmon Skin" },
-        { id: 216, name: "Musang King Durian Candy" },
-        { id: 217, name: "HT Durian Cookies🆕" },
-        { id: 218, name: "Fish Chips Classic🆕" },
-        { id: 219, name: "Salted Egg Fish Chips🆕" },
-        { id: 220, name: "Salted Egg Fish Chips Mala🆕" }
-    ],
-    Chocolate: [
-        { id: 301, name: "AD Chocolate Durian", unit: 'pc', defaultQuantity: 50 },
-        { id: 302, name: "AD Chocolate Sabah Tea", unit: 'pc', defaultQuantity: 50 },
-        { id: 303, name: "AD Chocolate Mango", unit: 'pc', defaultQuantity: 50 },
-        { id: 304, name: "AD Chocolate Chili", unit: 'pc', defaultQuantity: 50 },
-        { id: 305, name: "AD Chocolate Dark", unit: 'pc', defaultQuantity: 50 },
-        { id: 306, name: "AD Chocolate Coffee", unit: 'pc', defaultQuantity: 50 },
-        { id: 307, name: "AD Chocolate Banana", unit: 'pc', defaultQuantity: 50 },
-        { id: 308, name: "AD Chocolate Tiramisu", unit: 'pc', defaultQuantity: 50 },
-        { id: 309, name: "AD Chocolate Mint", unit: 'pc', defaultQuantity: 50 },
-        { id: 310, name: "AD Chocolate Rambutan", unit: 'pc', defaultQuantity: 50 },
-        { id: 311, name: "AD Chocolate Soursup", unit: 'pc', defaultQuantity: 50 },
-        { id: 312, name: "AD Chocolate Coconut", unit: 'pc', defaultQuantity: 50 },
-        { id: 313, name: "AD Chocolate Mangosteen", unit: 'pc', defaultQuantity: 50 }
-    ],
-    Sotong: [
-        { id: 401, name: "Cuttlefish Red" },
-        { id: 402, name: "Cuttlefish Lemon" },
-        { id: 403, name: "Cuttlefish Honey" },
-        { id: 404, name: "Cuttlefish Floss Original" },
-        { id: 405, name: "Cuttlefish Massive" },
-        { id: 406, name: "Cuttlefish Whole" },
-        { id: 407, name: "Cuttlefish Roasted" },
-        { id: 408, name: "Cuttlefish Chili" },
-        { id: 409, name: "Cuttle Fish Slices🆕" },
-        { id: 410, name: "Cuttle Fish Sugar🆕" },
-        { id: 411, name: "Five Star Cuttlefish" }
-    ],
-    Coffee: [
-        { id: 501, name: "BH W/Coffee(Mini)" },
-        { id: 502, name: "BH W/Coffee(Mini)No Sugar" },
-        { id: 503, name: "BH Durian W/Coffee(Mini)" },
-        { id: 504, name: "BH Teh Tarik(Mini)" },
-        { id: 505, name: "BH W/Coffee" },
-        { id: 506, name: "BH W/Coffee No Sugar" },
-        { id: 507, name: "BH Kopi O 2in1" },
-        { id: 508, name: "BH Kopi O No Sugar" },
-        { id: 509, name: "BH Teh Tarik" },
-        { id: 510, name: "BH Durian White Coffee" },
-        { id: 511, name: "Kopi Tenom Silver" },
-        { id: 512, name: "Kopi Tenom Gold" },
-        { id: 513, name: "Kopi Tenom Blue" },
-        { id: 514, name: "Kopi Tenom Green" },
-        { id: 515, name: "Kopi Tenom Red" }
-    ],
-    Amplang: [
-        { id: 601, name: "Amplang Ikan" },
-        { id: 602, name: "Amplang Udang" },
-        { id: 603, name: "Amplang Sotong" }
-    ],
-    Other: [
-        { id: 701, name: "Fruity Gummy Assorted" },
-        { id: 702, name: "Fruity Gummy Mango" },
-        { id: 703, name: "Durian Kuih" },
-        { id: 704, name: "Anchovy Blue" },
-        { id: 705, name: "Anchovy Green" },
-        { id: 706, name: "Anchovy Red" },
-        { id: 707, name: "Anchovy Yellow" }
-    ]
-};
-
-
-
-        let selectedItems = {};
-
-        function loadProducts(products) {
-            const productList = document.getElementById('productList');
-            productList.innerHTML = '';
-
-            products.forEach(product => {
-                const defaultQuantity = product.defaultQuantity || 1;
-                const div = document.createElement('div');
-                div.innerHTML = `
-                    <input type="checkbox" id="item${product.id}" onchange="saveItem(${product.id}, '${product.name}')">
-                    <label for="item${product.id}">${product.name}</label>
-                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-                    <input type="number" id="quantity${product.id}" min="1" value="${defaultQuantity}" onchange="saveQuantity(${product.id})">
-                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-                `;
-                productList.appendChild(div);
-
-                if (selectedItems[product.id]) {
-                    document.getElementById('item' + product.id).checked = true;
-                    document.getElementById('quantity' + product.id).value = selectedItems[product.id];
-                }
-            });r
-        }
-
-        function saveItem(id, name) {
-            const checkbox = document.getElementById('item' + id);
-            const quantity = document.getElementById('quantity' + id).value || 1;
-
-            if (checkbox.checked) {
-                selectedItems[id] = quantity;
-            } else {
-                delete selectedItems[id];
-            }
-        }
-
-        function saveQuantity(id) {
-            const quantity = document.getElementById('quantity' + id).value || 1;
-            if (selectedItems[id]) {
-                selectedItems[id] = quantity;
-            }
-        }
-
-        function changeQuantity(id, change) {
-            const quantityInput = document.getElementById('quantity' + id);
-            let currentQuantity = parseInt(quantityInput.value) || 1;
-            currentQuantity = Math.max(1, currentQuantity + change);
-            quantityInput.value = currentQuantity;
-            saveQuantity(id);
-        }
-
-        function toggleItems() {
-            let selectedStore = document.querySelector('input[name="store"]:checked');
-            let checkboxes = document.querySelectorAll('#productList input[type="checkbox"]');
-            let quantities = document.querySelectorAll('#productList input[type="number"]');
-
-            if (selectedStore) {
-                checkboxes.forEach(checkbox => checkbox.disabled = false);
-                quantities.forEach(quantity => quantity.disabled = false);
-            } else {
-                checkboxes.forEach(checkbox => checkbox.disabled = true);
-                quantities.forEach(quantity => quantity.disabled = true);
-            }
-        }
-
-        function showCategory() {
-            let selectedCategory = document.querySelector('input[name="category"]:checked');
-            if (selectedCategory) {
-                let categoryValue = selectedCategory.value;
-                let productsToShow = categories[categoryValue];
-                if (productsToShow) {
-                    loadProducts(productsToShow);
-                }
-            }
-            toggleItems();
-        }
-
-        function generateText() {
-            let result = '';
-            let selectedStore = document.querySelector('input[name="store"]:checked');
-            let hasAddOn = document.getElementById('addOnCheckbox').checked;
-
-            if (selectedStore) {
-                result += '🎄 Kedai: ' + selectedStore.value;
-                if (hasAddOn) {
-                    result += ' 💥Add On💥';
-                }
-                result += '\n\n';
-            } else {
-                result += '🎄 Kedai: 未选择\n';
-            }
-
-            const categorizedItems = {};
-            Object.keys(categories).forEach(category => {
-                categorizedItems[category] = [];
-            });
-
-            for (const [id, quantity] of Object.entries(selectedItems)) {
-                for (const [category, products] of Object.entries(categories)) {
-                    const product = products.find(p => p.id == id);
-                    if (product) {
-                        const unit = product.unit === 'pc' ? 'pc' : 'ctn';
-                        categorizedItems[category].push({
-                            name: product.name,
-                            quantity: quantity,
-                            unit: unit
-                        });
-                        break;
-                    }
-                }
-            }
-
-            for (const [category, items] of Object.entries(categorizedItems)) {
-                if (items.length > 0) {
-                    result += `\n=== ${category} ===\n`;
-                    items.forEach(item => {
-                        result += `${item.name} - ${item.quantity} ${item.unit}\n`;
-                    });
-                }
-            }
-
-            result += '\n🎄 Airport Stock Order: smartprofits.github.io/order/ 🎄';
-            document.getElementById('result').innerText = result;
-            return result;
-        }
-
-        function copyAndSendWhatsApp() {
-            let text = generateText();
-            navigator.clipboard.writeText(text).then(() => {
-                alert('文字已复制，现在跳转到WhatsApp');
-                let whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
-                window.location.href = whatsappURL;
-            }).catch(err => {
-                console.error('无法复制', err);
-            });
-        }
-
-        
-
-        function searchProduct() {
-            const searchText = document.getElementById('productSearch').value.toLowerCase();
-            const suggestionsContainer = document.getElementById('suggestions');
-            suggestionsContainer.innerHTML = '';
-
-            if (searchText.length === 0) return;
-
-            const allProducts = Object.values(categories).flat();
-            const matchingProducts = allProducts.filter(product => 
-                product.name.toLowerCase().includes(searchText)
-            );
-
-            matchingProducts.forEach(product => {
-                const div = document.createElement('div');
-                div.textContent = product.name;
-                div.onclick = () => selectProduct(product);
-                suggestionsContainer.appendChild(div);
-            });
-        }
-
-        function selectProduct(product) {
-            const productSearch = document.getElementById('productSearch');
-            productSearch.value = '';
-            const productList = document.getElementById('productList');
-            productList.innerHTML = '';
-
-            const div = document.createElement('div');
-            div.innerHTML = `
-                <input type="checkbox" id="item${product.id}" checked onchange="saveItem(${product.id}, '${product.name}')">
-                <label for="item${product.id}">${product.name}</label>
-                <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-                <input type="number" id="quantity${product.id}" min="1" value="1" onchange="saveQuantity(${product.id})">
-                <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-            `;
-            productList.appendChild(div);
-
-            saveItem(product.id, product.name);
-            document.getElementById('suggestions').innerHTML = '';
-        }
-
-        // 页面加载时初始化
-        window.onload = function() {
-
-    
-    // 添加自动播放音乐
-    const music = document.getElementById('backgroundMusic');
-    music.play().catch(function(error) {
-        console.log("自动播放失败：", error);
-        isMusicPlaying = false;
-        document.getElementById('musicToggle').innerHTML = '🔈 播放音乐';
-    });
-}
-        div.innerHTML = `
-    <input type="checkbox" id="item${product.id}" onchange="saveItem(${product.id}, '${product.name}')">
-    <label for="item${product.id}">${product.name}</label>
-    <div class="quantity-control">
-        <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-        <input type="number" id="quantity${product.id}" min="1" value="${defaultQuantity}" onchange="saveQuantity(${product.id})">
-        <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-    </div>
-`;
-
-// 在 selectProduct 函数中也要修改相应的 HTML
-div.innerHTML = `
-    <input type="checkbox" id="item${product.id}" checked onchange="saveItem(${product.id}, '${product.name}')">
-    <label for="item${product.id}">${product.name}</label>
-    <div class="quantity-control">
-        <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-        <input type="number" id="quantity${product.id}" min="1" value="1" onchange="saveQuantity(${product.id})">
-        <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-    </div>
-    
-`;
-div.innerHTML = `
-    <input type="checkbox" id="item${product.id}" onchange="saveItem(${product.id}, '${product.name}')">
-    <label for="item${product.id}">${product.name}</label>
-    <div class="quantity-control">
-        <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-        <input type="number" id="quantity${product.id}" min="1" value="${defaultQuantity}" onchange="saveQuantity(${product.id})">
-        <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-    </div>
-`;
-
-// 在 selectProduct 函数中也要修改相应的 HTML
-div.innerHTML = `
-    <input type="checkbox" id="item${product.id}" checked onchange="saveItem(${product.id}, '${product.name}')">
-    <label for="item${product.id}">${product.name}</label>
-    <div class="quantity-control">
-        <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-        <input type="number" id="quantity${product.id}" min="1" value="1" onchange="saveQuantity(${product.id})">
-        <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-    </div>
-`;
-// ... existing code ...
-
-// 修改音乐控制相关的代码
-// 修改音乐控制相关的代码
-let isMusicPlaying = false;
-
-// 修改音乐控制函数
-function toggleMusic() {
-    const music = document.getElementById('backgroundMusic');
-    const musicBtn = document.getElementById('musicToggle');
-    
-    if (!music.paused) {
-        // 如果音乐正在播放，就暂停
-        music.pause();
-        music.currentTime = 0;
-        isMusicPlaying = false;
-        musicBtn.innerHTML = '🔈 播放音乐';
-    } else {
-        // 如果音乐是暂停状态，尝试播放
-        const playPromise = music.play();
-        
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                isMusicPlaying = true;
-                musicBtn.innerHTML = '🔇 关闭音乐';
-            }).catch(error => {
-                console.log("播放失败：", error);
-                isMusicPlaying = false;
-                musicBtn.innerHTML = '🔈 播放音乐';
-            });
-        }
-    }
-}
-
-// 修改 window.onload 函数
-window.onload = function() {
-    const savedMode = localStorage.getItem('dark-mode');
-    if (savedMode === 'enabled') {
-        document.body.classList.add('dark-mode');
-        document.querySelector('.toggle-mode-btn').textContent = '🌞 Light Mode';
-    }
-    toggleItems();
-
-    // 添加一个自动播放的尝试
-    const music = document.getElementById('backgroundMusic');
-    const musicBtn = document.getElementById('musicToggle');
-    
-    // 尝试自动播放
-    document.addEventListener('click', function initAudioAutoplay() {
-        const playPromise = music.play();
-        
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                isMusicPlaying = true;
-                musicBtn.innerHTML = '🔇 关闭音乐';
-                // 移除事件监听器，因为我们只需要它执行一次
-                document.removeEventListener('click', initAudioAutoplay);
-            }).catch(error => {
-                console.log("自动播放失败：", error);
-                isMusicPlaying = false;
-                musicBtn.innerHTML = '🔈 播放音乐';
-            });
-        }
-    }, { once: true }); // 使用 once 选项确保事件监听器只执行一次
-}
-function loadProducts(products) {
-    const productList = document.getElementById('productList');
-    productList.innerHTML = '';
-
-    products.forEach(product => {
-        const div = document.createElement('div');
-        const isChecked = selectedItems[product.id] ? 'checked' : '';
-        
-        div.innerHTML = `
-            <input type="checkbox" id="item${product.id}" ${isChecked} onchange="saveItem(${product.id}, '${product.name}')">
-            <label for="item${product.id}">${product.name}</label>
-            <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-            <input type="number" 
-                   id="quantity${product.id}" 
-                   min="1" 
-                   value="${selectedItems[product.id] || 1}" 
-                   readonly>
-            <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-        `;
-        productList.appendChild(div);
-    });
-
-    // 加载并显示库存数量
-    loadQuantitiesFromSheet();
-}
-    </script>
-
-<p class="contact-info">
-    🎅 If you have any questions or need to add new products, please contact me (Mark). 
-    <br>
-    🎁 Merry Christmas and Happy New Year! 🎄
-    <br>
-    
-
-</p>
-</body>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+		<title>Airport Stock Request</title>
+		<style>
+
+
+
+			        :root {
+			            --christmas-red: #c41e3a;
+			            --christmas-green: #165b33;
+			            --christmas-gold: #ffd700;
+			            --snow-white: #fff;
+			        }
+
+
+			      .snowflake {
+			    color: rgba(255, 255, 255, 0.6);
+			    font-size: 1.2em;
+			    font-family: Arial, sans-serif;
+			    text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+			    position: fixed;
+			    z-index: -1;
+			    pointer-events: none;
+			    animation: fall linear infinite;
+			    will-change: transform;
+			}
+
+			@keyframes fall {
+			    0% {
+			        top: -10%;
+			        transform: translateX(0) rotate(0deg);
+			        opacity: 0.8;
+			    }
+			    20% {
+			        transform: translateX(15px) rotate(45deg);
+			        opacity: 0.9;
+			    }
+			    40% {
+			        transform: translateX(-15px) rotate(-45deg);
+			        opacity: 0.8;
+			    }
+			    60% {
+			        transform: translateX(15px) rotate(45deg);
+			        opacity: 0.7;
+			    }
+			    80% {
+			        transform: translateX(-15px) rotate(-45deg);
+			        opacity: 0.6;
+			    }
+			    100% {
+			        top: 110%;
+			        transform: translateX(0) rotate(0deg);
+			        opacity: 0.5;
+			    }
+			}
+
+			/* 调整雪花动画时间和延迟，使其更加自然 */
+			.snowflake:nth-child(1) { left: 5%; animation-duration: 15s; animation-delay: -2s; }
+			.snowflake:nth-child(2) { left: 15%; animation-duration: 12s; animation-delay: -1s; }
+			.snowflake:nth-child(3) { left: 25%; animation-duration: 13s; animation-delay: -3s; }
+			.snowflake:nth-child(4) { left: 35%; animation-duration: 14s; animation-delay: -4s; }
+			.snowflake:nth-child(5) { left: 45%; animation-duration: 16s; animation-delay: -5s; }
+			.snowflake:nth-child(6) { left: 55%; animation-duration: 13s; animation-delay: -6s; }
+			.snowflake:nth-child(7) { left: 65%; animation-duration: 15s; animation-delay: -7s; }
+			.snowflake:nth-child(8) { left: 75%; animation-duration: 14s; animation-delay: -2s; }
+			.snowflake:nth-child(9) { left: 85%; animation-duration: 12s; animation-delay: -3s; }
+			.snowflake:nth-child(10) { left: 95%; animation-duration: 13s; animation-delay: -4s; }
+
+
+			/* 减少雪花数量，只保留10个 */
+
+
+			        body {
+			            font-family: Arial, sans-serif;
+			            padding: 15px;
+			            margin: 0;
+			            background-color: #0a2818;
+			            color: var(--snow-white);
+			            transition: background-color 0.3s, color 0.3s;
+			        }
+
+			        /* 圣诞装饰 */
+			        .christmas-decorations {
+			            position: fixed;
+			            width: 100%;
+			            height: 100%;
+			            pointer-events: none;
+			            z-index: -1;
+			        }
+
+			        .christmas-tree {
+			            position: fixed;
+			            bottom: 20px;
+			            right: 20px;
+			            font-size: 40px;
+			            z-index: 1000;
+			        }
+
+
+
+			        .category-container {
+			            display: grid;
+			            grid-template-columns: repeat(3, 1fr);
+			            gap: 10px;
+			            margin-bottom: 20px;
+			        }
+
+			        #productList div {
+			            display: flex;
+			            justify-content: space-between;
+			            align-items: center;
+			            margin-bottom: 15px;
+			            background: rgba(255, 255, 255, 0.1);
+			            padding: 10px;
+			            border-radius: 8px;
+			            border: 1px solid var(--christmas-gold);
+			        }
+
+			        #suggestions {
+			            border: 1px solid var(--christmas-gold);
+			            max-height: 150px;
+			            overflow-y: auto;
+			            background-color: rgba(255, 255, 255, 0.9);
+			            position: absolute;
+			            width: 220px;
+			            z-index: 10;
+			            border-radius: 4px;
+			        }
+
+			        #suggestions div {
+			            padding: 8px;
+			            cursor: pointer;
+			            color: var(--christmas-green);
+			        }
+
+			        #suggestions div:hover {
+			            background-color: var(--christmas-red);
+			            color: var(--snow-white);
+			        }
+
+			        input[type="number"] {
+			            width: 60px;
+			            margin: 0 10px;
+			            text-align: center;
+			            background: rgba(255, 255, 255, 0.9);
+			            border: 1px solid var(--christmas-gold);
+			            border-radius: 4px;
+			            padding: 5px;
+			        }
+
+			        #productSearch {
+			            width: 210px;
+			            padding: 8px;
+			            font-size: 1.2rem;
+			            border-radius: 5px;
+			            border: 2px solid var(--christmas-gold);
+			            background: rgba(255, 255, 255, 0.9);
+			        }
+
+
+
+			        h1 {
+			            font-size: 4rem;
+			            font-weight: bold;
+			            text-align: center;
+			            color: var(--christmas-red);
+			            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+			            margin: 20px 0;
+			        }
+
+			        #result {
+			            width: 100%;
+			            height: 150px;
+			            border: 2px solid var(--christmas-gold);
+			            padding: 10px;
+			            margin-top: 10px;
+			            white-space: pre-wrap;
+			            overflow: auto;
+			            font-size: 1.1rem;
+			            background: rgba(255, 255, 255, 0.1);
+			            border-radius: 8px;
+			            color: var(--snow-white);
+			        }
+
+			        button {
+			            padding: 12px 18px;
+			            font-size: 1.1rem;
+			            margin: 10px 0;
+			            cursor: pointer;
+			            width: 100%;
+			            border: none;
+			            border-radius: 8px;
+			            background-color: var(--christmas-red);
+			            color: var(--snow-white);
+			            border: 2px solid var(--christmas-gold);
+			            transition: all 0.3s ease;
+			        }
+
+			        button:hover {
+			            transform: scale(1.02);
+			            background-color: #a01830;
+			        }
+
+			        .whatsapp-button {
+			            background-color: #25D366;
+			        }
+
+
+			        .contact-info {
+			            font-size: 1rem;
+			            font-style: italic;
+			            text-align: center;
+			            background: rgba(255, 255, 255, 0.1);
+			            padding: 15px;
+			            border-radius: 8px;
+			            margin: 20px 0;
+			            border: 1px solid var(--christmas-gold);
+			        }
+
+			       .quantity-control {
+			    display: flex;
+			    align-items: center;
+			    gap: 5px;
+			}
+			.music-toggle-btn {
+			    background-color: var(--christmas-red);
+			    color: var(--snow-white);
+			    padding: 10px 20px;
+			    margin: 10px 0;
+			    cursor: pointer;
+			    border: none;
+			    border-radius: 5px;
+			    font-size: 1rem;
+			    border: 2px solid var(--christmas-gold);
+			    transition: all 0.3s ease;
+			    width: 100%;
+			}
+
+			.music-toggle-btn:hover {
+			    transform: scale(1.02);
+			    background-color: #a01830;
+			}
+
+			#productList div {
+			    display: flex;
+			    align-items: center;
+			    gap: 10px;
+			    margin-bottom: 15px;
+			}
+
+			.quantity-btn {
+			    width: 30px;
+			    height: 30px;
+			    border: none;
+			    border-radius: 50%;
+			    cursor: pointer;
+			    font-size: 1.5rem;
+			    display: flex;
+			    justify-content: center;
+			    align-items: center;
+			    background-color: var(--christmas-red);
+			    color: var(--snow-white);
+			    border: 1px solid var(--christmas-gold);
+			    padding: 0;
+			    line-height: 1;
+			}
+
+			input[type="number"] {
+			    width: 50px;
+			    height: 30px;
+			    text-align: center;
+			    margin: 0 5px;
+			    padding: 0 5px;
+			    border: 1px solid var(--christmas-gold);
+			    border-radius: 4px;
+			}
+
+			/* 确保复选框和标签的对齐 */
+			#productList input[type="checkbox"] {
+			    margin: 0;
+			    vertical-align: middle;
+			}
+
+			#productList label {
+			    margin-right: auto;
+			    display: flex;
+			    align-items: center;
+			    gap: 5px;
+			}
+
+			#productList div {
+			    display: flex;
+			    align-items: center;
+			    gap: 10px;
+			    margin-bottom: 15px;
+			}
+
+			.quantity-btn {
+			    width: 30px;
+			    height: 30px;
+			    border: none;
+			    border-radius: 50%;
+			    cursor: pointer;
+			    font-size: 1.5rem;
+			    display: flex;
+			    justify-content: center;
+			    align-items: center;
+			    background-color: var(--christmas-red);
+			    color: var(--snow-white);
+			    border: 1px solid var(--christmas-gold);
+			    padding: 0;
+			    line-height: 1;
+			}
+
+			input[type="number"] {
+			    width: 25px;
+			    height: 30px;
+			    text-align: center;
+			    margin: 0 5px;
+			    padding: 0 5px;
+			    border: 1px solid var(--christmas-gold);
+			    border-radius: 4px;
+			}
+
+			/* 确保复选框和标签的对齐 */
+			#productList input[type="checkbox"] {
+			    margin: 0;
+			    vertical-align: middle;
+			}
+
+			#productList label {
+			    margin-right: auto;
+			    display: flex;
+			    align-items: center;
+			    gap: 5px;
+			}
+
+			        .quantity-btn:hover {
+			            transform: scale(1.1);
+			            background-color: #a01830;
+			        }
+
+			        @media (max-width: 768px) {
+			            h1 { font-size: 2rem; }
+			            body { padding: 10px; }
+			            button { padding: 10px 15px; }
+			        }
+		</style>
+	</head>
+	<body>
+		<div class="snowflakes" aria-hidden="true">
+			<div class="snowflake">❅</div>
+			<div class="snowflake">❆</div>
+			<div class="snowflake">❅</div>
+			<div class="snowflake">❆</div>
+			<div class="snowflake">❅</div>
+			<div class="snowflake">❆</div>
+			<div class="snowflake">❅</div>
+			<div class="snowflake">❆</div>
+			<div class="snowflake">❅</div>
+			<div class="snowflake">❆</div>
+			<div class="snowflake">❅</div>
+			<div class="snowflake">❆</div>
+			<div class="snowflake">❅</div>
+			<div class="snowflake">❆</div>
+			<div class="snowflake">❅</div>
+			<div class="snowflake">❆</div>
+			<div class="snowflake">❅</div>
+			<div class="snowflake">❆</div>
+			<div class="snowflake">❅</div>
+			<div class="snowflake">❆</div>
+		</div>
+
+		<audio id="backgroundMusic" loop>
+			<source src="https://github.com/SmartProfits/orderpro/raw/refs/heads/main/1.mp3" type="audio/mpeg" />
+		</audio>
+		<button id="musicToggle" class="music-toggle-btn" onclick="toggleMusic()">
+			🔇 关闭音乐
+		</button>
+		<div style="text-align: center; margin-top: 5px; font-size: 0.9em; color: var(--snow-white);">
+			提示：点击页面任意位置开始播放背景音乐
+		</div>
+		<h1>🎄Stock Order🎄</h1>
+
+		<div class="container">
+			<div class="loader">
+				<span style="--i:0;"></span>
+				<span style="--i:1;"></span>
+				<span style="--i:2;"></span>
+				<span style="--i:3;"></span>
+				<span style="--i:4;"></span>
+			</div>
+		</div>
+
+		<div>
+			<input type="checkbox" id="addOnCheckbox" />
+			<label for="addOnCheckbox">Add On</label>
+		</div>
+
+		<h3>选择店铺</h3>
+		<div>
+			<label><input type="radio" name="store" value="*JKL*" onclick="toggleItems()" /> JKL</label>
+			<label><input type="radio" name="store" value="*TOM*" onclick="toggleItems()" /> TOM</label>
+			<label><input type="radio" name="store" value="*Ole-Ole*" onclick="toggleItems()" /> Ole-Ole</label>
+		</div>
+
+		<h3>选择目录</h3>
+		<div class="category-container">
+			<label><input type="radio" name="category" value="BanHeang" onclick="showCategory()" />BanHeang</label>
+			<label><input type="radio" name="category" value="HopHup" onclick="showCategory()" />HopHup</label>
+			<label><input type="radio" name="category" value="Chocolate" onclick="showCategory()" />Chocolate</label>
+			<label><input type="radio" name="category" value="Sotong" onclick="showCategory()" />Sotong</label>
+			<label><input type="radio" name="category" value="Coffee" onclick="showCategory()" />Coffee</label>
+			<label><input type="radio" name="category" value="Amplang" onclick="showCategory()" />Amplang</label>
+			<label><input type="radio" name="category" value="Other" onclick="showCategory()" />Other</label>
+		</div>
+
+		<input type="text" id="productSearch" placeholder="搜索商品..." oninput="searchProduct()" autocomplete="off" />
+		<div id="suggestions"></div>
+		<h3>选择商品（没输入数量默认是1）</h3>
+		<div id="productList"></div>
+
+		<button onclick="generateText()">生成文字</button>
+		<button class="whatsapp-button" onclick="copyAndSendWhatsApp()">复制并发送至WhatsApp</button>
+
+		<div id="result"></div>
+		<script>
+			         const SHEET_ID = '你的表格ID';
+			const SHEET_NAME = 'Sheet1';
+
+			function loadQuantitiesFromSheet() {
+			    const SHEET_ID = '1QUB8R0-gtwNhdiPYU2rwFf_UKrGyyqCQHzIQ7AxKFLI';
+			    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+
+			    fetch(url)
+			        .then(response => response.text())
+			        .then(data => {
+			            try {
+			                const jsonData = JSON.parse(data.substr(47).slice(0, -2));
+			                const rows = jsonData.table.rows;
+
+
+			                const stockMap = {};
+			                rows.forEach(row => {
+			                    if(row.c[0] && row.c[1]) {
+			                        const productName = row.c[0].v;
+			                        const stockQuantity = row.c[1].v;
+			                        stockMap[productName] = stockQuantity;
+			                    }
+			                });
+
+
+			                const labels = document.querySelectorAll('#productList label');
+			                labels.forEach(label => {
+			                    const productName = label.textContent;
+			                    const stock = stockMap[productName];
+			                    if (stock !== undefined) {
+
+			                        label.innerHTML = `${productName} <span style="color: #666; font-size: 1em;">(Stock:${stock})</span>`;
+			                    }
+			                });
+			            } catch (error) {
+			                console.error('解析数据错误:', error);
+			            }
+			        })
+			        .catch(error => console.error('获取数据失败:', error));
+			}
+
+						        const categories = {
+			    BanHeang: [
+			        { id: 101, name: "BH Tambun Original" },
+			        { id: 102, name: "BH Tambun Pandan" },
+			        { id: 103, name: "BH Tambun White Lotus" },
+			        { id: 104, name: "BH Tau Sar Pheah" },
+			        { id: 105, name: "BH Heong Pheah" },
+			        { id: 106, name: "BH Beh Teh Saw" },
+			        { id: 107, name: "BH Phong Pheah" },
+			        { id: 108, name: "BH Pepper Biscuit" },
+			        { id: 109, name: "BH Hup Toh Soh" },
+			        { id: 110, name: "BH Omlette Crisp Chocolate" },
+			        { id: 111, name: "BH Omlette Crisp Pandan" },
+			        { id: 112, name: "BH Kai Chai Biscuit" },
+			        { id: 113, name: "BH Almond Slice" },
+			        { id: 114, name: "BH Almond Slice Salted Egg" },
+			        { id: 115, name: "BH Durian Crisp" },
+			        { id: 116, name: "BH Coconut Crisp" },
+			        { id: 117, name: "BH Salted Fish Crisp" },
+			        { id: 118, name: "BH Salted Egg Crisp" },
+			        { id: 119, name: "BH Cheese Crisp" },
+			        { id: 120, name: "BH Chic Kut Teh" },
+			        { id: 121, name: "BH Ginger Slice" },
+			        { id: 122, name: "BH Dried Mango" },
+			        { id: 123, name: "BH Kacang Tumbuk" },
+			        { id: 124, name: "BH Gula Kacang" },
+			        { id: 125, name: "BH Black Sesame Peanut" },
+			        { id: 126, name: "BH Shat Kek Ma" },
+			        { id: 127, name: "BH Shat Kek Ma (Brown Sugar)" },
+			        { id: 128, name: "BH Coconut Biscuits" },
+			        { id: 129, name: "BH FD Durian 50g" },
+			        { id: 130, name: "BH FD Mango 50g" },
+			        { id: 131, name: "BH FD Durian 30g" },
+			        { id: 132, name: "BH Butter Cookies" },
+			        { id: 133, name: "BH Chocolate Cookies" },
+			        { id: 134, name: "BH Raisin Cookies" },
+			        { id: 135, name: "BH Almond Cookies" },
+			        { id: 136, name: "BH Pineapple Tart" },
+			        { id: 137, name: "BH Red Bean Mochi" },
+			        { id: 138, name: "BH Peanut Mochi" },
+			        { id: 139, name: "BH Green Tea Mochi" },
+			        { id: 140, name: "BH Durian Mochi" },
+			        { id: 141, name: "BH Yam Mochi" },
+			        { id: 142, name: "BH Mochi Milk Yam Filling" },
+			        { id: 143, name: "BH Mochi Milk Mango Filling" },
+			        { id: 144, name: "BH Mochi Milk Green Tea" },
+			        { id: 145, name: "BH Sotong Cuttlefish" },
+			        { id: 146, name: "BH Gula Cuttlefish" },
+			        { id: 147, name: "BH Satay Fish" },
+			        { id: 148, name: "BH Fillet Cracker With Anchovy" },
+			        { id: 149, name: "BH Fillet Cracker With Seaweed" },
+			        { id: 150, name: "BH Sakura Shrimp" },
+			        { id: 151, name: "BH Frugurt Yogurt Blueberry" },
+			        { id: 152, name: "BH Frugurt Yogurt Peach" },
+			        { id: 153, name: "BH Frugurt Yogurt Mango" },
+			        { id: 154, name: "BH Durian Pudding" },
+			        { id: 155, name: "BH Coconut Pudding" },
+			        { id: 156, name: "BH Dodol Durian" },
+			        { id: 157, name: "BH Dodol Coconut" },
+			        { id: 158, name: "BH Dodol Pandan" },
+			        { id: 159, name: "BH Durian Beh Teh Saw" }
+			    ],
+			    HopHup: [
+			        { id: 201, name: "HT Durian Tart" },
+			        { id: 202, name: "HT Mango Tart" },
+			        { id: 203, name: "HT Durian Wafer Roll" },
+			        { id: 204, name: "HT Mango Wafer Roll🆕" },
+			        { id: 205, name: "HT Omelette Durian" },
+			        { id: 206, name: "HT Coconut Ori Cookies" },
+			        { id: 207, name: "HT Coconut Pandan Cookies" },
+			        { id: 208, name: "HT Dodol Original🆕" },
+			        { id: 209, name: "HT Dodol Kopi" },
+			        { id: 210, name: "HT Dodol Durian" },
+			        { id: 211, name: "HT Freeze Dried Mango" },
+			        { id: 212, name: "HT Freeze Dried Durian" },
+			        { id: 213, name: "Salted Egg Fish Skin" },
+			        { id: 214, name: "Salted Egg Fish Skin Spicy" },
+			        { id: 215, name: "Salted Egg Salmon Skin" },
+			        { id: 216, name: "Musang King Durian Candy" },
+			        { id: 217, name: "HT Durian Cookies🆕" },
+			        { id: 218, name: "Fish Chips Classic🆕" },
+			        { id: 219, name: "Salted Egg Fish Chips🆕" },
+			        { id: 220, name: "Salted Egg Fish Chips Mala🆕" }
+			    ],
+			    Chocolate: [
+			        { id: 301, name: "AD Chocolate Durian", unit: 'pc', defaultQuantity: 50 },
+			        { id: 302, name: "AD Chocolate Sabah Tea", unit: 'pc', defaultQuantity: 50 },
+			        { id: 303, name: "AD Chocolate Mango", unit: 'pc', defaultQuantity: 50 },
+			        { id: 304, name: "AD Chocolate Chili", unit: 'pc', defaultQuantity: 50 },
+			        { id: 305, name: "AD Chocolate Dark", unit: 'pc', defaultQuantity: 50 },
+			        { id: 306, name: "AD Chocolate Coffee", unit: 'pc', defaultQuantity: 50 },
+			        { id: 307, name: "AD Chocolate Banana", unit: 'pc', defaultQuantity: 50 },
+			        { id: 308, name: "AD Chocolate Tiramisu", unit: 'pc', defaultQuantity: 50 },
+			        { id: 309, name: "AD Chocolate Mint", unit: 'pc', defaultQuantity: 50 },
+			        { id: 310, name: "AD Chocolate Rambutan", unit: 'pc', defaultQuantity: 50 },
+			        { id: 311, name: "AD Chocolate Soursup", unit: 'pc', defaultQuantity: 50 },
+			        { id: 312, name: "AD Chocolate Coconut", unit: 'pc', defaultQuantity: 50 },
+			        { id: 313, name: "AD Chocolate Mangosteen", unit: 'pc', defaultQuantity: 50 }
+			    ],
+			    Sotong: [
+			        { id: 401, name: "Cuttlefish Red" },
+			        { id: 402, name: "Cuttlefish Lemon" },
+			        { id: 403, name: "Cuttlefish Honey" },
+			        { id: 404, name: "Cuttlefish Floss Original" },
+			        { id: 405, name: "Cuttlefish Massive" },
+			        { id: 406, name: "Cuttlefish Whole" },
+			        { id: 407, name: "Cuttlefish Roasted" },
+			        { id: 408, name: "Cuttlefish Chili" },
+			        { id: 409, name: "Cuttle Fish Slices🆕" },
+			        { id: 410, name: "Cuttle Fish Sugar🆕" },
+			        { id: 411, name: "Five Star Cuttlefish" }
+			    ],
+			    Coffee: [
+			        { id: 501, name: "BH W/Coffee(Mini)" },
+			        { id: 502, name: "BH W/Coffee(Mini)No Sugar" },
+			        { id: 503, name: "BH Durian W/Coffee(Mini)" },
+			        { id: 504, name: "BH Teh Tarik(Mini)" },
+			        { id: 505, name: "BH W/Coffee" },
+			        { id: 506, name: "BH W/Coffee No Sugar" },
+			        { id: 507, name: "BH Kopi O 2in1" },
+			        { id: 508, name: "BH Kopi O No Sugar" },
+			        { id: 509, name: "BH Teh Tarik" },
+			        { id: 510, name: "BH Durian White Coffee" },
+			        { id: 511, name: "Kopi Tenom Silver" },
+			        { id: 512, name: "Kopi Tenom Gold" },
+			        { id: 513, name: "Kopi Tenom Blue" },
+			        { id: 514, name: "Kopi Tenom Green" },
+			        { id: 515, name: "Kopi Tenom Red" }
+			    ],
+			    Amplang: [
+			        { id: 601, name: "Amplang Ikan" },
+			        { id: 602, name: "Amplang Udang" },
+			        { id: 603, name: "Amplang Sotong" }
+			    ],
+			    Other: [
+			        { id: 701, name: "Fruity Gummy Assorted" },
+			        { id: 702, name: "Fruity Gummy Mango" },
+			        { id: 703, name: "Durian Kuih" },
+			        { id: 704, name: "Anchovy Blue" },
+			        { id: 705, name: "Anchovy Green" },
+			        { id: 706, name: "Anchovy Red" },
+			        { id: 707, name: "Anchovy Yellow" }
+			    ]
+			};
+
+
+
+			        let selectedItems = {};
+
+			        function loadProducts(products) {
+			            const productList = document.getElementById('productList');
+			            productList.innerHTML = '';
+
+			            products.forEach(product => {
+			                const defaultQuantity = product.defaultQuantity || 1;
+			                const div = document.createElement('div');
+			                div.innerHTML = `
+			                    <input type="checkbox" id="item${product.id}" onchange="saveItem(${product.id}, '${product.name}')">
+			                    <label for="item${product.id}">${product.name}</label>
+			                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+			                    <input type="number" id="quantity${product.id}" min="1" value="${defaultQuantity}" onchange="saveQuantity(${product.id})">
+			                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+			                `;
+			                productList.appendChild(div);
+
+			                if (selectedItems[product.id]) {
+			                    document.getElementById('item' + product.id).checked = true;
+			                    document.getElementById('quantity' + product.id).value = selectedItems[product.id];
+			                }
+			            });r
+			        }
+
+			        function saveItem(id, name) {
+			            const checkbox = document.getElementById('item' + id);
+			            const quantity = document.getElementById('quantity' + id).value || 1;
+
+			            if (checkbox.checked) {
+			                selectedItems[id] = quantity;
+			            } else {
+			                delete selectedItems[id];
+			            }
+			        }
+
+			        function saveQuantity(id) {
+			            const quantity = document.getElementById('quantity' + id).value || 1;
+			            if (selectedItems[id]) {
+			                selectedItems[id] = quantity;
+			            }
+			        }
+
+			        function changeQuantity(id, change) {
+			            const quantityInput = document.getElementById('quantity' + id);
+			            let currentQuantity = parseInt(quantityInput.value) || 1;
+			            currentQuantity = Math.max(1, currentQuantity + change);
+			            quantityInput.value = currentQuantity;
+			            saveQuantity(id);
+			        }
+
+			        function toggleItems() {
+			            let selectedStore = document.querySelector('input[name="store"]:checked');
+			            let checkboxes = document.querySelectorAll('#productList input[type="checkbox"]');
+			            let quantities = document.querySelectorAll('#productList input[type="number"]');
+
+			            if (selectedStore) {
+			                checkboxes.forEach(checkbox => checkbox.disabled = false);
+			                quantities.forEach(quantity => quantity.disabled = false);
+			            } else {
+			                checkboxes.forEach(checkbox => checkbox.disabled = true);
+			                quantities.forEach(quantity => quantity.disabled = true);
+			            }
+			        }
+
+			        function showCategory() {
+			            let selectedCategory = document.querySelector('input[name="category"]:checked');
+			            if (selectedCategory) {
+			                let categoryValue = selectedCategory.value;
+			                let productsToShow = categories[categoryValue];
+			                if (productsToShow) {
+			                    loadProducts(productsToShow);
+			                }
+			            }
+			            toggleItems();
+			        }
+
+			        function generateText() {
+			            let result = '';
+			            let selectedStore = document.querySelector('input[name="store"]:checked');
+			            let hasAddOn = document.getElementById('addOnCheckbox').checked;
+
+			            if (selectedStore) {
+			                result += '🎄 Kedai: ' + selectedStore.value;
+			                if (hasAddOn) {
+			                    result += ' 💥Add On💥';
+			                }
+			                result += '\n\n';
+			            } else {
+			                result += '🎄 Kedai: 未选择\n';
+			            }
+
+			            const categorizedItems = {};
+			            Object.keys(categories).forEach(category => {
+			                categorizedItems[category] = [];
+			            });
+
+			            for (const [id, quantity] of Object.entries(selectedItems)) {
+			                for (const [category, products] of Object.entries(categories)) {
+			                    const product = products.find(p => p.id == id);
+			                    if (product) {
+			                        const unit = product.unit === 'pc' ? 'pc' : 'ctn';
+			                        categorizedItems[category].push({
+			                            name: product.name,
+			                            quantity: quantity,
+			                            unit: unit
+			                        });
+			                        break;
+			                    }
+			                }
+			            }
+
+			            for (const [category, items] of Object.entries(categorizedItems)) {
+			                if (items.length > 0) {
+			                    result += `\n=== ${category} ===\n`;
+			                    items.forEach(item => {
+			                        result += `${item.name} - ${item.quantity} ${item.unit}\n`;
+			                    });
+			                }
+			            }
+
+			            result += '\n🎄 Airport Stock Order: smartprofits.github.io/order/ 🎄';
+			            document.getElementById('result').innerText = result;
+			            return result;
+			        }
+
+			        function copyAndSendWhatsApp() {
+			            let text = generateText();
+			            navigator.clipboard.writeText(text).then(() => {
+			                alert('文字已复制，现在跳转到WhatsApp');
+			                let whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
+			                window.location.href = whatsappURL;
+			            }).catch(err => {
+			                console.error('无法复制', err);
+			            });
+			        }
+
+
+
+			        function searchProduct() {
+			            const searchText = document.getElementById('productSearch').value.toLowerCase();
+			            const suggestionsContainer = document.getElementById('suggestions');
+			            suggestionsContainer.innerHTML = '';
+
+			            if (searchText.length === 0) return;
+
+			            const allProducts = Object.values(categories).flat();
+			            const matchingProducts = allProducts.filter(product =>
+			                product.name.toLowerCase().includes(searchText)
+			            );
+
+			            matchingProducts.forEach(product => {
+			                const div = document.createElement('div');
+			                div.textContent = product.name;
+			                div.onclick = () => selectProduct(product);
+			                suggestionsContainer.appendChild(div);
+			            });
+			        }
+
+			        function selectProduct(product) {
+			            const productSearch = document.getElementById('productSearch');
+			            productSearch.value = '';
+			            const productList = document.getElementById('productList');
+			            productList.innerHTML = '';
+
+			            const div = document.createElement('div');
+			            div.innerHTML = `
+			                <input type="checkbox" id="item${product.id}" checked onchange="saveItem(${product.id}, '${product.name}')">
+			                <label for="item${product.id}">${product.name}</label>
+			                <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+			                <input type="number" id="quantity${product.id}" min="1" value="1" onchange="saveQuantity(${product.id})">
+			                <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+			            `;
+			            productList.appendChild(div);
+
+			            saveItem(product.id, product.name);
+			            document.getElementById('suggestions').innerHTML = '';
+			        }
+
+
+			        window.onload = function() {
+
+
+
+			    const music = document.getElementById('backgroundMusic');
+			    music.play().catch(function(error) {
+			        console.log("自动播放失败：", error);
+			        isMusicPlaying = false;
+			        document.getElementById('musicToggle').innerHTML = '🔈 播放音乐';
+			    });
+			}
+			        div.innerHTML = `
+			    <input type="checkbox" id="item${product.id}" onchange="saveItem(${product.id}, '${product.name}')">
+			    <label for="item${product.id}">${product.name}</label>
+			    <div class="quantity-control">
+			        <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+			        <input type="number" id="quantity${product.id}" min="1" value="${defaultQuantity}" onchange="saveQuantity(${product.id})">
+			        <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+			    </div>
+			`;
+
+
+			div.innerHTML = `
+			    <input type="checkbox" id="item${product.id}" checked onchange="saveItem(${product.id}, '${product.name}')">
+			    <label for="item${product.id}">${product.name}</label>
+			    <div class="quantity-control">
+			        <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+			        <input type="number" id="quantity${product.id}" min="1" value="1" onchange="saveQuantity(${product.id})">
+			        <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+			    </div>
+
+			`;
+			div.innerHTML = `
+			    <input type="checkbox" id="item${product.id}" onchange="saveItem(${product.id}, '${product.name}')">
+			    <label for="item${product.id}">${product.name}</label>
+			    <div class="quantity-control">
+			        <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+			        <input type="number" id="quantity${product.id}" min="1" value="${defaultQuantity}" onchange="saveQuantity(${product.id})">
+			        <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+			    </div>
+			`;
+
+
+			div.innerHTML = `
+			    <input type="checkbox" id="item${product.id}" checked onchange="saveItem(${product.id}, '${product.name}')">
+			    <label for="item${product.id}">${product.name}</label>
+			    <div class="quantity-control">
+			        <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+			        <input type="number" id="quantity${product.id}" min="1" value="1" onchange="saveQuantity(${product.id})">
+			        <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+			    </div>
+			`;
+
+			let isMusicPlaying = false;
+
+
+			function toggleMusic() {
+			    const music = document.getElementById('backgroundMusic');
+			    const musicBtn = document.getElementById('musicToggle');
+
+			    if (!music.paused) {
+
+			        music.pause();
+			        music.currentTime = 0;
+			        isMusicPlaying = false;
+			        musicBtn.innerHTML = '🔈 播放音乐';
+			    } else {
+
+			        const playPromise = music.play();
+
+			        if (playPromise !== undefined) {
+			            playPromise.then(() => {
+			                isMusicPlaying = true;
+			                musicBtn.innerHTML = '🔇 关闭音乐';
+			            }).catch(error => {
+			                console.log("播放失败：", error);
+			                isMusicPlaying = false;
+			                musicBtn.innerHTML = '🔈 播放音乐';
+			            });
+			        }
+			    }
+			}
+
+
+			window.onload = function() {
+			    const savedMode = localStorage.getItem('dark-mode');
+			    if (savedMode === 'enabled') {
+			        document.body.classList.add('dark-mode');
+			        document.querySelector('.toggle-mode-btn').textContent = '🌞 Light Mode';
+			    }
+			    toggleItems();
+
+
+			    const music = document.getElementById('backgroundMusic');
+			    const musicBtn = document.getElementById('musicToggle');
+
+
+			    document.addEventListener('click', function initAudioAutoplay() {
+			        const playPromise = music.play();
+
+			        if (playPromise !== undefined) {
+			            playPromise.then(() => {
+			                isMusicPlaying = true;
+			                musicBtn.innerHTML = '🔇 关闭音乐';
+
+			                document.removeEventListener('click', initAudioAutoplay);
+			            }).catch(error => {
+			                console.log("自动播放失败：", error);
+			                isMusicPlaying = false;
+			                musicBtn.innerHTML = '🔈 播放音乐';
+			            });
+			        }
+			    }, { once: true });
+			}
+			function loadProducts(products) {
+			    const productList = document.getElementById('productList');
+			    productList.innerHTML = '';
+
+			    products.forEach(product => {
+			        const div = document.createElement('div');
+			        const isChecked = selectedItems[product.id] ? 'checked' : '';
+
+			        div.innerHTML = `
+			            <input type="checkbox" id="item${product.id}" ${isChecked} onchange="saveItem(${product.id}, '${product.name}')">
+			            <label for="item${product.id}">${product.name}</label>
+			            <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+			            <input type="number"
+			                   id="quantity${product.id}"
+			                   min="1"
+			                   value="${selectedItems[product.id] || 1}"
+			                   readonly>
+			            <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+			        `;
+			        productList.appendChild(div);
+			    });
+
+
+			    loadQuantitiesFromSheet();
+			}
+		</script>
+
+		<p class="contact-info">
+			🎅 If you have any questions or need to add new products, please contact me (Mark).
+			<br />
+			🎁 Merry Christmas and Happy New Year! 🎄
+			<br />
+		</p>
+	</body>
 </html>
