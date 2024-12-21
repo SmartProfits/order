@@ -755,22 +755,16 @@ function copyAndSendWhatsApp() {
    let text = generateText();
    navigator.clipboard.writeText(text)
        .then(() => {
-           // 使用 WhatsApp API URL 格式
-           const encodedText = encodeURIComponent(text);
-           const whatsappURL = `whatsapp://send?text=${encodedText}`;
-           
-           // 尝试使用 WhatsApp API URL
-           window.location.href = whatsappURL;
-           
-           // 如果上面的方式失败，延迟后使用群组链接作为后备方案
+           alert('文字已复制！\n1. 即将跳转到WhatsApp群组\n2. 请在群组中长按，选择"粘贴"');
            setTimeout(() => {
                window.location.href = 'https://chat.whatsapp.com/FwwLA8M62mPK1N1jZj6BJw';
-           }, 1000);
+           }, 2000);
        })
        .catch(err => {
            console.error('无法复制', err);
            alert('复制失败，请手动复制');
        });
+
 }
 
 
