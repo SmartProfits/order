@@ -751,16 +751,16 @@
 			            return result;
 			        }
 
-			        function copyAndSendWhatsApp() {
-			            let text = generateText();
-			            navigator.clipboard.writeText(text).then(() => {
-			                alert('文字已复制，现在跳转到WhatsApp');
-			                let whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
-			                window.location.href = whatsappURL;
-			            }).catch(err => {
-			                console.error('无法复制', err);
-			            });
-			        }
+function copyAndSendWhatsApp() {
+   let text = generateText();
+   navigator.clipboard.writeText(text).then(() => {
+       if (confirm('文字已复制到剪贴板。是否跳转到WhatsApp群组？')) {
+           window.location.href = 'https://chat.whatsapp.com/FwwLA8M62mPK1N1jZj6BJw';
+       }
+   }).catch(err => {
+       console.error('无法复制', err);
+   });
+}
 
 
 
