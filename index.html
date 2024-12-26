@@ -548,30 +548,33 @@
 						        let selectedItems = {};
 
 			function loadProducts(products) {
-			    const productList = document.getElementById('productList');
-			    productList.innerHTML = '';
+    const productList = document.getElementById('productList');
+    productList.innerHTML = '';
 
-			    products.forEach(product => {
-			        const div = document.createElement('div');
-			        const isChecked = selectedItems[product.id] ? 'checked' : '';
+    products.forEach(product => {
+        const div = document.createElement('div');
+        const isChecked = selectedItems[product.id] ? 'checked' : '';
+        // 使用商品的默认数量或者已保存的数量，如果都没有则使用1
+        const defaultQuantity = product.defaultQuantity || 1;
+        const currentQuantity = selectedItems[product.id] || defaultQuantity;
 
-			        div.innerHTML = `
-			            <input type="checkbox" id="item${product.id}" ${isChecked} onchange="saveItem(${product.id}, '${product.name}')">
-			            <label for="item${product.id}">${product.name}</label>
-			            <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-			            <input type="number"
-			                   id="quantity${product.id}"
-			                   min="1"
-			                   value="${selectedItems[product.id] || 1}"
-			                   readonly>
-			            <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-			        `;
-			        productList.appendChild(div);
-			    });
+        div.innerHTML = `
+            <input type="checkbox" id="item${product.id}" ${isChecked} onchange="saveItem(${product.id}, '${product.name}')">
+            <label for="item${product.id}">${product.name}</label>
+            <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+            <input type="number"
+                   id="quantity${product.id}"
+                   min="1"
+                   value="${currentQuantity}"
+                   readonly>
+            <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+        `;
+        productList.appendChild(div);
+    });
 
-			    // 加载并显示库存数量
-			    loadQuantitiesFromSheet();
-			}
+    // 加载并显示库存数量
+    loadQuantitiesFromSheet();
+}
 						        function saveItem(id, name) {
 						            const checkbox = document.getElementById('item' + id);
 						            const quantity = document.getElementById('quantity' + id).value || 1;
