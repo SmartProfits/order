@@ -116,21 +116,33 @@
 									        }
 
 									        /* 为每个商品项设置 flexbox 布局 */
-									        #productList div {
-									            display: flex;
-									            justify-content: space-between; /* 商品名称和输入框分布两侧 */
-									            align-items: center; /* 垂直居中对齐 */
-									            margin-bottom: 15px; /* 保持每个商品项之间的间距 */
-									        }
+									       /* 修改商品列表项的样式 */
+#productList div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+}
 
-									        /* 商品名称部分自适应占据左边空间 */
-									        #productList label {
-									            flex-grow: 1; /* 自动扩展，占据可用空间 */
-									            margin-right: 10px; /* 给输入框预留间距 */
+/* 修改标签容器的样式 */
+#productList label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    margin: 0;
+    padding-right: 15px;
+}
 
-
-									        }
-
+#productList label span {
+    margin-left: auto; /* 将库存信息推到右边 */
+    color: #666;
+    font-size: 0.9em;
+    white-space: nowrap; /* 防止库存信息换行 */
+    min-width: 80px; /* 给库存信息一个固定的最小宽度 */
+    text-align: right; /* 右对齐库存信息 */
+}
 									        #suggestions {
 									            border: 1px solid #ccc;
 									            max-height: 150px;
@@ -285,17 +297,17 @@
 						    transition: transform 0.1s ease;
 						}
 						.quantity-btn {
-						    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-						}
+    flex-shrink: 0; /* 防止按钮被压缩 */
+}
 						.quantity-btn {
 						    transition: background-color 0.3s ease, color 0.3s ease;
 						}
 
 
 						                    input[type="number"] {
-						    width: 40px; /* 你可以根据需要调整为任何合适的大小 */
+						    width: 30px; /* 你可以根据需要调整为任何合适的大小 */
 						    padding: 5px; /* 调整内边距以使输入框看起来更舒适 */
-						    margin-left: 10px;
+						    margin-left: px;
 			                margin-right: 10px;/* 留出与其他元素的间距 */
 						    text-align: middle; /* 保持数字靠右对齐 */
 						   }
