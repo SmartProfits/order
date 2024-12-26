@@ -527,9 +527,9 @@
 			        { id: 515, name: "Kopi Tenom Red" }
 			    ],
 			    Amplang: [
-			        { id: 601, name: "Amplang Ikan" },
-			        { id: 602, name: "Amplang Udang" },
-			        { id: 603, name: "Amplang Sotong" }
+			        { id: 601, name: "Amplang Ikan", unit: 'pkt', defaultQuantity: 60 },
+			        { id: 602, name: "Amplang Udang", unit: 'pkt', defaultQuantity: 60 },
+			        { id: 603, name: "Amplang Sotong" , unit: 'pkt', defaultQuantity: 60 }
 			    ],
 			    Other: [
 			        { id: 701, name: "Fruity Gummy Assorted" },
@@ -539,8 +539,8 @@
 			        { id: 705, name: "Anchovy Green" },
 			        { id: 706, name: "Anchovy Red" },
 			        { id: 707, name: "Anchovy Yellow" },
-                    { id: 708, name: "Prawn Cracker 500g" },
-                    { id: 709, name: "Fish Maw" }
+                    { id: 708, name: "Prawn Cracker 500g", unit: 'pkt', },
+                    { id: 709, name: "Fish Maw", unit: 'pkt', }
 			    ]
 			};
 
@@ -636,65 +636,63 @@
 						            toggleItems(); // 确保激活商品选择框
 						        }
 
-						function generateText() {
-			    let result = '';
-			    let selectedStore = document.querySelector('input[name="store"]:checked');
-			    let hasAddOn = document.getElementById('addOnCheckbox').checked;
+					function generateText() {
+    let result = '';
+    let selectedStore = document.querySelector('input[name="store"]:checked');
+    let hasAddOn = document.getElementById('addOnCheckbox').checked;
 
-			    // 添加店铺信息
-			    if (selectedStore) {
-			        result += 'Kedai: ' + selectedStore.value;
-			        if (hasAddOn) {
-			            result += ' 💥Add On💥';
-			        }
-			        result += '\n\n';
-			    } else {
-			        result += 'Kedai: 未选择\n';
-			    }
+    // 添加店铺信息
+    if (selectedStore) {
+        result += 'Kedai: ' + selectedStore.value;
+        if (hasAddOn) {
+            result += ' 💥Add On💥';
+        }
+        result += '\n\n';
+    } else {
+        result += 'Kedai: 未选择\n';
+    }
 
-			    // 按分类整理已选商品
-			    const categorizedItems = {};
+    // 按分类整理已选商品
+    const categorizedItems = {};
 
-			    // 初始化所有分类
-			    Object.keys(categories).forEach(category => {
-			        categorizedItems[category] = [];
-			    });
+    // 初始化所有分类
+    Object.keys(categories).forEach(category => {
+        categorizedItems[category] = [];
+    });
 
-			    // 将选中的商品按分类整理
-			    for (const [id, quantity] of Object.entries(selectedItems)) {
-			        // 查找商品所属的分类
-			        for (const [category, products] of Object.entries(categories)) {
-			            const product = products.find(p => p.id == id);
-			            if (product) {
-			                const unit = product.unit === 'pc' ? 'pc' : 'ctn';
-			                categorizedItems[category].push({
-			                    name: product.name,
-			                    quantity: quantity,
-			                    unit: unit
-			                });
-			                break;
-			            }
-			        }
-			    }
+    // 将选中的商品按分类整理
+    for (const [id, quantity] of Object.entries(selectedItems)) {
+        // 查找商品所属的分类和单位
+        for (const [category, products] of Object.entries(categories)) {
+            const product = products.find(p => p.id == id);
+            if (product) {
+                // 使用商品定义中的单位，如果没有定义则默认使用 "ctn"
+                const unit = product.unit || 'ctn';
+                categorizedItems[category].push({
+                    name: product.name,
+                    quantity: quantity,
+                    unit: unit
+                });
+                break;
+            }
+        }
+    }
 
-			    // 按分类输出商品
-			    for (const [category, items] of Object.entries(categorizedItems)) {
-			        if (items.length > 0) {
-			            result += `\n=== ${category} ===\n`;
-			            items.forEach(item => {
-			                result += `${item.name} - ${item.quantity} ${item.unit}\n`;
-			            });
-			        }
-			    }
+    // 按分类输出商品
+    for (const [category, items] of Object.entries(categorizedItems)) {
+        if (items.length > 0) {
+            result += `\n=== ${category} ===\n`;
+            items.forEach(item => {
+                result += `${item.name} - ${item.quantity} ${item.unit}\n`;
+            });
+        }
+    }
 
-			    result += '\nAirport Stock Order: smartprofits.github.io/order/';
-			    document.getElementById('result').innerText = result;
+    result += '\nAirport Stock Order: smartprofits.github.io/order/';
+    document.getElementById('result').innerText = result;
 
-			    // 清空商品列表
-			    document.getElementById('productList').innerHTML = '';
-
-			    return result;
-			}
+    return result;
+}
 
 
 
