@@ -6,317 +6,317 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Airport Stock Request</title>
 		<style>
-			#productList label span {
-			    color: #666;  /* 默认模式下的颜色 */
-			    font-size: 0.9em;
+#productList label span {
+    color: #666;  /* 默认模式下的颜色 */
+    font-size: 0.9em;
+}
+
+/* 黑暗模式下的 stock 信息颜色 */
+body.dark-mode #productList label span {
+    color: #ffd700;  /* 黄色 */
+}
+
+									.container {
+									    display: flex;
+									    justify-content: center;
+									    align-items: center;
+									    width: 100%;
+									}
+
+
+									.loader {
+									    position: relative;
+									    display: flex;
+									}
+
+									.loader span {
+									    position: relative;
+									    width: 50px;
+									    height: 50px;
+									    background: #eaeef0;
+									    margin: 0 5px;
+									    border: 5px solid #eaeef0;
+									    border-radius: 50%;
+									    box-shadow:
+									                8px 8px 15px rgba(0, 0, 0, 0.2),
+									                inset 3px 3px 5px rgba(0, 0, 0, 0.1),
+									                inset -1px -1px 5px rgba(255, 255, 255, 1);
+									}
+
+									.loader span::before {
+									    content: "";
+									    position: absolute;
+									    top: 0;
+									    left: 0;
+									    width: 100%;
+									    height: 100%;
+									    background: #5c89ff;
+									    border-radius: 50%;
+									    box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.1),
+									                inset -1px -1px 5px rgba(255, 255, 255, 1);
+									    transform: scale(0);
+									    animation: animateDots 3.5s linear infinite, animateColor 5s linear infinite;
+									    animation-delay: calc(var(--i) * 0.2s);
+									}
+
+									@keyframes animateDots {
+									    0%, 9.99%, 70.001%
+									    {
+									        transform: scale(0);
+									    }
+									    10%, 70%
+									    {
+									        transform: scale(1);
+									    }
+									}
+
+									@keyframes animateColor {
+									    0% {
+									        filter: hue-rotate(0deg);
+									    }
+									    100% {
+									        filter: hue-rotate(360deg);
+									    }
+									}
+															        body {
+															            font-family: Arial, sans-serif;
+															            padding: 15px;
+															            margin: 0;
+															            background-color: #FCEEDD; /* 柔和的浅灰背景 */
+															            color: #333; /* 深色字体提升对比度 */
+															            transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
+															        }
+
+
+															        /* 黑暗模式 */
+															        body.dark-mode {
+															            background-color: #1c1c1c; /* 深灰色背景 */
+															            color: #e0e0e0; /* 浅色字体 */
+															        }
+
+															        /* 添加一个容器类来包含目录的label */
+															        .category-container {
+															            display: grid;
+															            grid-template-columns: repeat(3, 1fr); /* 每行3列，每列平分宽度 */
+															            gap: 10px; /* 项目之间的间距 */
+															            margin-bottom: 20px;
+															        }
+
+															        body.dark-mode #result {
+															            background-color: #333; /* 黑暗模式下的结果框颜色 */
+															            color: #e0e0e0; /* 浅色字体 */
+															        }
+
+															        body.dark-mode button {
+															            background-color: #444; /* 按钮背景颜色 */
+															            color: #e0e0e0; /* 按钮字体颜色 */
+															        }
+
+															        body.dark-mode .whatsapp-button {
+															            background-color: #075e54; /* 深色WhatsApp绿色 */
+															            color: #e0e0e0; /* 按钮字体颜色 */
+															        }
+
+															        /* 为每个商品项设置 flexbox 布局 */
+															       /* 修改商品列表项的样式 */
+						#productList div {
+			    display: flex;
+			    justify-content: space-between;
+			    align-items: center;
+			    margin-bottom: 15px;
+			    background: rgba(255, 255, 255, 0.1);
+			    padding: 10px;
+			    border-radius: 8px;
+			    border: 1px solid #ccc;  /* 添加边框 */
+			    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* 添加阴影效果 */
 			}
 
-			/* 黑暗模式下的 stock 信息颜色 */
-			body.dark-mode #productList label span {
-			    color: #ffd700;  /* 黄色 */
-			}
-
-												.container {
-												    display: flex;
-												    justify-content: center;
-												    align-items: center;
-												    width: 100%;
-												}
-
-
-												.loader {
-												    position: relative;
-												    display: flex;
-												}
-
-												.loader span {
-												    position: relative;
-												    width: 50px;
-												    height: 50px;
-												    background: #eaeef0;
-												    margin: 0 5px;
-												    border: 5px solid #eaeef0;
-												    border-radius: 50%;
-												    box-shadow:
-												                8px 8px 15px rgba(0, 0, 0, 0.2),
-												                inset 3px 3px 5px rgba(0, 0, 0, 0.1),
-												                inset -1px -1px 5px rgba(255, 255, 255, 1);
-												}
-
-												.loader span::before {
-												    content: "";
-												    position: absolute;
-												    top: 0;
-												    left: 0;
-												    width: 100%;
-												    height: 100%;
-												    background: #5c89ff;
-												    border-radius: 50%;
-												    box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.1),
-												                inset -1px -1px 5px rgba(255, 255, 255, 1);
-												    transform: scale(0);
-												    animation: animateDots 3.5s linear infinite, animateColor 5s linear infinite;
-												    animation-delay: calc(var(--i) * 0.2s);
-												}
-
-												@keyframes animateDots {
-												    0%, 9.99%, 70.001%
-												    {
-												        transform: scale(0);
-												    }
-												    10%, 70%
-												    {
-												        transform: scale(1);
-												    }
-												}
-
-												@keyframes animateColor {
-												    0% {
-												        filter: hue-rotate(0deg);
-												    }
-												    100% {
-												        filter: hue-rotate(360deg);
-												    }
-												}
-																		        body {
-																		            font-family: Arial, sans-serif;
-																		            padding: 15px;
-																		            margin: 0;
-																		            background-color: #FCEEDD; /* 柔和的浅灰背景 */
-																		            color: #333; /* 深色字体提升对比度 */
-																		            transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
-																		        }
-
-
-																		        /* 黑暗模式 */
-																		        body.dark-mode {
-																		            background-color: #1c1c1c; /* 深灰色背景 */
-																		            color: #e0e0e0; /* 浅色字体 */
-																		        }
-
-																		        /* 添加一个容器类来包含目录的label */
-																		        .category-container {
-																		            display: grid;
-																		            grid-template-columns: repeat(3, 1fr); /* 每行3列，每列平分宽度 */
-																		            gap: 10px; /* 项目之间的间距 */
-																		            margin-bottom: 20px;
-																		        }
-
-																		        body.dark-mode #result {
-																		            background-color: #333; /* 黑暗模式下的结果框颜色 */
-																		            color: #e0e0e0; /* 浅色字体 */
-																		        }
-
-																		        body.dark-mode button {
-																		            background-color: #444; /* 按钮背景颜色 */
-																		            color: #e0e0e0; /* 按钮字体颜色 */
-																		        }
-
-																		        body.dark-mode .whatsapp-button {
-																		            background-color: #075e54; /* 深色WhatsApp绿色 */
-																		            color: #e0e0e0; /* 按钮字体颜色 */
-																		        }
-
-																		        /* 为每个商品项设置 flexbox 布局 */
-																		       /* 修改商品列表项的样式 */
-									#productList div {
+						#productList label {
 						    display: flex;
-						    justify-content: space-between;
-						    align-items: center;
-						    margin-bottom: 15px;
-						    background: rgba(255, 255, 255, 0.1);
-						    padding: 10px;
-						    border-radius: 8px;
-						    border: 1px solid #ccc;  /* 添加边框 */
-						    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* 添加阴影效果 */
+						    flex-direction: column;
+						    align-items: flex-start;
+						    gap: 2px;
+						    flex: 1; /* 让标签占据剩余空间 */
 						}
 
-									#productList label {
-									    display: flex;
-									    flex-direction: column;
-									    align-items: flex-start;
-									    gap: 2px;
-									    flex: 1; /* 让标签占据剩余空间 */
-									}
+						#productList label span {
+						    font-size: 0.8em;
+						    color: #666;
+						}
+						.quantity-controls {
+						    display: flex;
+						    align-items: center;
+						    gap: 5px;
+						    position: absolute; /* 绝对定位 */
+						    right: 0; /* 靠右对齐 */
+						}
+															        #suggestions {
+															            border: 1px solid #ccc;
+															            max-height: 150px;
+															            overflow-y: auto;
+															            background-color: white;
+															            position: absolute;
+															            width: 220px;
+															            z-index: 10;
+															        }
 
-									#productList label span {
-									    font-size: 0.8em;
-									    color: #666;
-									}
-									.quantity-controls {
-									    display: flex;
-									    align-items: center;
-									    gap: 5px;
-									    position: absolute; /* 绝对定位 */
-									    right: 0; /* 靠右对齐 */
-									}
-																		        #suggestions {
-																		            border: 1px solid #ccc;
-																		            max-height: 150px;
-																		            overflow-y: auto;
-																		            background-color: white;
-																		            position: absolute;
-																		            width: 220px;
-																		            z-index: 10;
-																		        }
-
-																		        #suggestions div {
-																		    padding: 4px; /* 调整上下的 padding 来减少间隔 */
-																		    line-height: 0.6; /* 调小 line-height 以减少上下间距 */
-																		    cursor: pointer;
-																		    color: #333; /* 设置字体颜色为深灰色 */
-																		}
-
-																		}
-
-
-																		        #suggestions div:hover {
-																		            background-color: #f0f0f0;
-																		        }
-
-																		        /* 调整输入框大小并对齐右边 */
-																		        input[type="number"] {
-									    width: 40px;
-									    text-align: center;
-									    margin: 0 5px;
-									}
-																		        #productSearch {
-																		    width: 210px; /* 调整为100%以适应容器宽度 */
-																		    padding: 5px; /* 增加内边距以增大点击区域 */
-																		    font-size: 1.2rem; /* 调整字体大小 */
-																		    border-radius: 5px; /* 使边框圆润 */
-																		    border: 1px solid #ccc; /* 设置边框颜色 */
-																		}
-
-																		        h1 {
-																		            font-size: 4rem;
-																		            font-weight: bold;
-																		            text-align: center;
-
-																		        }
-
-																		        #result {
-																		            width: 100%;
-																		            height: 150px;
-																		            border: 1px solid #ccc;
-																		            padding: 10px;
-																		            margin-top: 10px;
-																		            white-space: pre-wrap;
-																		            overflow: auto;
-																		            font-size: 1.1rem;
-																		            background-color: #fff;
-																		            border-radius: 8px;
-																		        }
-
-																		        div {
-																		            margin-bottom: 15px;
-																		        }
-
-																		        label {
-																		            font-size: 1.1rem;
-																		        }
-
-																		        input[type="number"], input[type="checkbox"] {
-																		            font-size: 1rem;
-																		        }
-
-																		        button {
-																		            padding: 12px 18px;
-																		            font-size: 1.1rem;
-																		            margin: 10px 0;
-																		            cursor: pointer;
-																		            width: 100%;
-																		            border: none;
-																		            border-radius: 8px;
-																		        }
-
-																		        /* WhatsApp 绿色按钮样式 */
-																		        .whatsapp-button {
-																		            background-color: #25D366; /* WhatsApp绿色 */
-																		            color: white; /* 白色文字 */
-																		        }
-
-																		        /* 切换模式按钮样式 */
-																		        .toggle-mode-btn {
-																		            background-color: #007bff;
-																		            color: white;
-																		            padding: 10px 20px;
-																		            margin-bottom: 20px;
-																		            cursor: pointer;
-																		            border: none;
-																		            border-radius: 5px;
-																		            font-size: 1rem;
-																		        }
-
-																		        .contact-info {
-																		            font-size: 1rem;
-																		            font-style: italic;
-																		            color: #555; /* 稍微浅一点的颜色 */
-																		            text-align: center;
-																		            background-color: #f9f9f9; /* 柔和的背景色 */
-																		            padding: 10px;
-																		            border-radius: 8px;
-																		            margin-bottom: 20px; /* 增加与下方内容的间距 */
-																		            border: 1px solid #ddd; /* 添加浅色边框 */
-																		        }
-
-																		        @media (max-width: 768px) {
-																		            h1 {
-																		                font-size: 3rem;
-																		            }
-
-																		            body {
-																		                padding: 10px;
-																		            }
-
-																		            button {
-																		                padding: 10px 15px;
-																		            }
-																		        }
-
-																		        .quantity-btn {
-																		            width: 30px;
-																		            height: 30px;
-																		            border: none;
-																		            border-radius: 50%; /* 圆形按钮 */
-																		            cursor: pointer;
-																		            font-size: 2rem;
-																		            display: inline-flex;
-																		            justify-content: center;
-																		            align-items: center;
-																		        }
-
-																		        .quantity-btn:nth-child(3) {
-																		            background-color: #4CAF50 ; /* 青色 */
-																		            color: white;
-																		        }
-
-																		        .quantity-btn:nth-child(5) {
-																		            background-color: #F44336; /* 红色 */
-																		            color: white;
-																		        }
-															                    .quantity-btn:hover {
-															    transform: scale(1.1); /* 放大按钮 */
-															    transition: transform 0.2s ease; /* 添加过渡效果 */
+															        #suggestions div {
+															    padding: 4px; /* 调整上下的 padding 来减少间隔 */
+															    line-height: 0.6; /* 调小 line-height 以减少上下间距 */
+															    cursor: pointer;
+															    color: #333; /* 设置字体颜色为深灰色 */
 															}
-															.quantity-btn:active {
-															    transform: scale(0.95); /* 按下时缩小按钮 */
-															    transition: transform 0.1s ease;
-															}
-															.quantity-btn {
-									    flex-shrink: 0; /* 防止按钮被压缩 */
-									}
-															.quantity-btn {
-															    transition: background-color 0.3s ease, color 0.3s ease;
+
 															}
 
 
+															        #suggestions div:hover {
+															            background-color: #f0f0f0;
+															        }
 
-															                    input[type="number"] {
-															    width: 30px; /* 你可以根据需要调整为任何合适的大小 */
-															    padding: 12px; /* 调整内边距以使输入框看起来更舒适 */
-															  									    text-align: middle; /* 保持数字靠右对齐 */
-															   }
+															        /* 调整输入框大小并对齐右边 */
+															        input[type="number"] {
+						    width: 40px;
+						    text-align: center;
+						    margin: 0 5px;
+						}
+															        #productSearch {
+															    width: 210px; /* 调整为100%以适应容器宽度 */
+															    padding: 5px; /* 增加内边距以增大点击区域 */
+															    font-size: 1.2rem; /* 调整字体大小 */
+															    border-radius: 5px; /* 使边框圆润 */
+															    border: 1px solid #ccc; /* 设置边框颜色 */
+															}
+
+															        h1 {
+															            font-size: 4rem;
+															            font-weight: bold;
+															            text-align: center;
+
+															        }
+
+															        #result {
+															            width: 100%;
+															            height: 150px;
+															            border: 1px solid #ccc;
+															            padding: 10px;
+															            margin-top: 10px;
+															            white-space: pre-wrap;
+															            overflow: auto;
+															            font-size: 1.1rem;
+															            background-color: #fff;
+															            border-radius: 8px;
+															        }
+
+															        div {
+															            margin-bottom: 15px;
+															        }
+
+															        label {
+															            font-size: 1.1rem;
+															        }
+
+															        input[type="number"], input[type="checkbox"] {
+															            font-size: 1rem;
+															        }
+
+															        button {
+															            padding: 12px 18px;
+															            font-size: 1.1rem;
+															            margin: 10px 0;
+															            cursor: pointer;
+															            width: 100%;
+															            border: none;
+															            border-radius: 8px;
+															        }
+
+															        /* WhatsApp 绿色按钮样式 */
+															        .whatsapp-button {
+															            background-color: #25D366; /* WhatsApp绿色 */
+															            color: white; /* 白色文字 */
+															        }
+
+															        /* 切换模式按钮样式 */
+															        .toggle-mode-btn {
+															            background-color: #007bff;
+															            color: white;
+															            padding: 10px 20px;
+															            margin-bottom: 20px;
+															            cursor: pointer;
+															            border: none;
+															            border-radius: 5px;
+															            font-size: 1rem;
+															        }
+
+															        .contact-info {
+															            font-size: 1rem;
+															            font-style: italic;
+															            color: #555; /* 稍微浅一点的颜色 */
+															            text-align: center;
+															            background-color: #f9f9f9; /* 柔和的背景色 */
+															            padding: 10px;
+															            border-radius: 8px;
+															            margin-bottom: 20px; /* 增加与下方内容的间距 */
+															            border: 1px solid #ddd; /* 添加浅色边框 */
+															        }
+
+															        @media (max-width: 768px) {
+															            h1 {
+															                font-size: 3rem;
+															            }
+
+															            body {
+															                padding: 10px;
+															            }
+
+															            button {
+															                padding: 10px 15px;
+															            }
+															        }
+
+															        .quantity-btn {
+															            width: 30px;
+															            height: 30px;
+															            border: none;
+															            border-radius: 50%; /* 圆形按钮 */
+															            cursor: pointer;
+															            font-size: 2rem;
+															            display: inline-flex;
+															            justify-content: center;
+															            align-items: center;
+															        }
+
+															        .quantity-btn:nth-child(3) {
+															            background-color: #4CAF50 ; /* 青色 */
+															            color: white;
+															        }
+
+															        .quantity-btn:nth-child(5) {
+															            background-color: #F44336; /* 红色 */
+															            color: white;
+															        }
+												                    .quantity-btn:hover {
+												    transform: scale(1.1); /* 放大按钮 */
+												    transition: transform 0.2s ease; /* 添加过渡效果 */
+												}
+												.quantity-btn:active {
+												    transform: scale(0.95); /* 按下时缩小按钮 */
+												    transition: transform 0.1s ease;
+												}
+												.quantity-btn {
+						    flex-shrink: 0; /* 防止按钮被压缩 */
+						}
+												.quantity-btn {
+												    transition: background-color 0.3s ease, color 0.3s ease;
+												}
+
+
+
+												                    input[type="number"] {
+												    width: 30px; /* 你可以根据需要调整为任何合适的大小 */
+												    padding: 12px; /* 调整内边距以使输入框看起来更舒适 */
+												  									    text-align: middle; /* 保持数字靠右对齐 */
+												   }
 		</style>
 	</head>
 	<body>
