@@ -1,138 +1,149 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Airport Stock Request</title>
     <style>
-        #productList label span {
-            color: #666;  /* 默认模式下的颜色 */
-            font-size: 0.9em;
-        }
-
-        /* 黑暗模式下的 stock 信息颜色 */
-        body.dark-mode #productList label span {
-            color: #ffd700;  /* 黄色 */
-        }
-
-        .shop-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 每行显示3列 */
-            gap: 5px; /* 每个店铺之间的间距 */
-            margin-bottom: 20px; /* 与下方内容的间距 */
-        }
-
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-        }
-
-        .loader {
-            position: relative;
-            display: flex;
-        }
-
-        .loader span {
-            position: relative;
-            width: 50px;
-            height: 50px;
-            background: #eaeef0;
-            margin: 0 5px;
-            border: 5px solid #eaeef0;
-            border-radius: 50%;
-            box-shadow:
-                8px 8px 15px rgba(0, 0, 0, 0.2),
-                inset 3px 3px 5px rgba(0, 0, 0, 0.1),
-                inset -1px -1px 5px rgba(255, 255, 255, 1);
-        }
-
-        .loader span::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #5c89ff;
-            border-radius: 50%;
-            box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.1),
-                        inset -1px -1px 5px rgba(255, 255, 255, 1);
-            transform: scale(0);
-            animation: animateDots 3.5s linear infinite, animateColor 5s linear infinite;
-            animation-delay: calc(var(--i) * 0.2s);
-        }
-
-        @keyframes animateDots {
-            0%, 9.99%, 70.001% {
-                transform: scale(0);
-            }
-            10%, 70% {
-                transform: scale(1);
-            }
-        }
-
-        @keyframes animateColor {
-            0% {
-                filter: hue-rotate(0deg);
-            }
-            100% {
-                filter: hue-rotate(360deg);
-            }
-        }
-
+        /* 新年主题颜色 */
         body {
             font-family: Arial, sans-serif;
             padding: 15px;
             margin: 0;
-            background-color: #FCEEDD; /* 柔和的浅灰背景 */
-            color: #333; /* 深色字体提升对比度 */
+            background-color: #FFFAF0; /* 浅黄色背景 */
+            color: #B22222; /* 火砖色字体 */
             transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
+            position: relative; /* 为canvas定位提供参考 */
+            overflow-x: hidden; /* 防止横向滚动 */
         }
 
-        /* 黑暗模式 */
-        body.dark-mode {
-            background-color: #1c1c1c; /* 深灰色背景 */
-            color: #e0e0e0; /* 浅色字体 */
+        /* 画布样式 */
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* 确保在所有内容下方 */
+            pointer-events: none; /* 不阻碍用户操作 */
         }
 
-        /* 添加一个容器类来包含目录的label */
-        .category-container {
+        /* 新年装饰：灯笼按钮样式 */
+        .lantern-btn {
+            position: relative; /* 为内部文字居中设置相对定位 */
+            display: inline-flex; /* 使灯笼图标成为一个灵活容器 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            width: 40px; /* 设置按钮宽度 */
+            height: 40px; /* 设置按钮高度 */
+            background-color: #f8e1a1; /* 灯笼按钮背景色 */
+            color: #ff4500; /* 灯笼颜色 */
+            font-weight: bold; /* 加粗文字 */
+            border: 2px solid #ffa500; /* 边框颜色 */
+            border-radius: 50%; /* 圆形灯笼 */
+            font-size: 1.2rem; /* 调整灯笼尺寸 */
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            cursor: pointer;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        .lantern-btn .inner-text {
+            position: absolute; /* 绝对定位内部文字 */
+            font-size: 0.8rem; /* 调整文字大小 */
+            color: white; /* 将文字设置为白色 */
+            font-weight: bold;
+        }
+
+        .lantern-btn:hover {
+            transform: scale(1.1); /* 鼠标悬停时放大 */
+            background-color: #ffd700; /* 鼠标悬停时背景颜色 */
+            color: #ff0000; /* 鼠标悬停时灯笼外框颜色 */
+        }
+
+        .lantern-btn:active {
+            transform: scale(0.95); /* 按下时缩小 */
+        }
+
+        /* 店铺和分类容器 */
+        .shop-container, .category-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 每行3列，每列平分宽度 */
-            gap: 10px; /* 项目之间的间距 */
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* 自适应列数 */
+            gap: 10px; /* 每个项目之间的间距 */
             margin-bottom: 20px;
         }
 
-        body.dark-mode #result {
-            background-color: #333; /* 黑暗模式下的结果框颜色 */
-            color: #e0e0e0; /* 浅色字体 */
+        /* 标题样式 */
+        .stock-order-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px; /* 调整间距 */
+            margin-bottom: 20px; /* 空间下方 */
         }
 
-        body.dark-mode button {
-            background-color: #444; /* 按钮背景颜色 */
-            color: #e0e0e0; /* 按钮字体颜色 */
+        .stock-order-container img {
+            width: 50px; /* 调整图片大小 */
+            height: auto;
         }
 
-        body.dark-mode .whatsapp-button {
-            background-color: #075e54; /* 深色WhatsApp绿色 */
-            color: #e0e0e0; /* 按钮字体颜色 */
+        h1 {
+            font-size: 4rem;
+            font-weight: bold;
+            text-align: center;
+            color: #B22222; /* 火砖色 */
+            margin-bottom: 20px;
         }
 
-        /* 为每个商品项设置 flexbox 布局 */
-        /* 修改商品列表项的样式 */
+        h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* 输入框样式 */
+        #productSearch {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px; /* 增加内边距以增大点击区域 */
+            font-size: 1.2rem; /* 调整字体大小 */
+            border-radius: 5px; /* 使边框圆润 */
+            border: 1px solid #ccc; /* 设置边框颜色 */
+            margin-bottom: 10px;
+        }
+
+        /* 建议框样式 */
+        #suggestions {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: white;
+            position: absolute;
+            width: calc(100% - 30px); /* 调整宽度以匹配输入框 */
+            max-width: 400px;
+            z-index: 2;
+        }
+
+        #suggestions div {
+            padding: 8px; /* 调整上下的 padding 来减少间隔 */
+            cursor: pointer;
+            color: #333; /* 设置字体颜色为深灰色 */
+        }
+
+        #suggestions div:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* 商品列表样式 */
         #productList div {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.2);
             padding: 10px;
             border-radius: 8px;
             border: 1px solid #ccc;  /* 添加边框 */
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* 添加阴影效果 */
+            position: relative;
         }
 
         #productList label {
@@ -143,63 +154,42 @@
             flex: 1; /* 让标签占据剩余空间 */
         }
 
-        #productList label span {
-            font-size: 0.8em;
-            color: #666;
-        }
-
         .quantity-controls {
             display: flex;
             align-items: center;
             gap: 5px;
             position: absolute; /* 绝对定位 */
-            right: 0; /* 靠右对齐 */
+            right: 10px; /* 靠右对齐 */
         }
 
-        #suggestions {
-            border: 1px solid #ccc;
-            max-height: 150px;
-            overflow-y: auto;
-            background-color: white;
-            position: absolute;
-            width: 220px;
-            z-index: 10;
+        /* 调整数量输入框 */
+        .quantity-controls input[type="number"] {
+            width: 50px; /* 调整为较小的宽度 */
+            text-align: center;
         }
 
-        #suggestions div {
-            padding: 4px; /* 调整上下的 padding 来减少间隔 */
-            line-height: 0.6; /* 调小 line-height 以减少上下间距 */
+        /* 按钮样式 */
+        button {
+            padding: 10px 15px;
+            font-size: 1.1rem;
+            margin: 10px 0;
             cursor: pointer;
-            color: #333; /* 设置字体颜色为深灰色 */
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            z-index: 2; /* 确保按钮在canvas之上 */
         }
 
-        #suggestions div:hover {
-            background-color: #f0f0f0;
+        /* WhatsApp 绿色按钮样式 */
+        .whatsapp-button {
+            background-color: #25D366; /* WhatsApp绿色 */
+            color: white; /* 白色文字 */
         }
 
-        /* 调整输入框大小并对齐右边 */
-        input[type="number"] {
-            width: 40px;
-            text-align: center;
-            margin: 0 5px;
-        }
-
-        #productSearch {
-            width: 210px; /* 调整为100%以适应容器宽度 */
-            padding: 5px; /* 增加内边距以增大点击区域 */
-            font-size: 1.2rem; /* 调整字体大小 */
-            border-radius: 5px; /* 使边框圆润 */
-            border: 1px solid #ccc; /* 设置边框颜色 */
-        }
-
-        h1 {
-            font-size: 4rem;
-            font-weight: bold;
-            text-align: center;
-        }
-
+        /* 结果框样式 */
         #result {
             width: 100%;
+            max-width: 600px;
             height: 150px;
             border: 1px solid #ccc;
             padding: 10px;
@@ -209,62 +199,140 @@
             font-size: 1.1rem;
             background-color: #fff;
             border-radius: 8px;
+            z-index: 2; /* 确保结果框在canvas之上 */
         }
 
-        div {
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-size: 1.1rem;
-        }
-
-        input[type="number"],
-        input[type="checkbox"] {
-            font-size: 1rem;
-        }
-
-        button {
-            padding: 12px 18px;
-            font-size: 1.1rem;
-            margin: 10px 0;
-            cursor: pointer;
-            width: 100%;
-            border: none;
-            border-radius: 8px;
-        }
-
-        /* WhatsApp 绿色按钮样式 */
-        .whatsapp-button {
-            background-color: #25D366; /* WhatsApp绿色 */
-            color: white; /* 白色文字 */
-        }
-
-        /* 切换模式按钮样式 */
-        .toggle-mode-btn {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
+        /* 联系信息样式 */
         .contact-info {
-            font-size: 1rem;
-            font-style: italic;
-            color: #555; /* 稍微浅一点的颜色 */
             text-align: center;
-            background-color: #f9f9f9; /* 柔和的背景色 */
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px; /* 增加与下方内容的间距 */
-            border: 1px solid #ddd; /* 添加浅色边框 */
+            margin-top: 20px;
+            color: var(--dark-red);
         }
 
+        /* 模态框样式 */
+        .modal {
+            display: none; /* 默认隐藏 */
+            position: fixed; /* 固定定位 */
+            z-index: 3; /* 确保在所有内容之上 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: rgba(0,0,0,0.5); /* 半透明背景 */
+        }
+
+        .modal-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(4, auto);
+            gap: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background-color: #FFFAF0;
+            padding: 30px;
+            border: 2px solid #B22222;
+            border-radius: 10px;
+            text-align: center;
+            color: #B22222;
+            font-size: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: doorOpen 1s forwards;
+        }
+
+        .modal-content div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Optionally, set font-size or other styles for individual characters */
+        }
+
+        @keyframes doorOpen {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        /* 新年歌曲选择样式 */
+        .song-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            z-index: 2; /* 确保在canvas之上 */
+        }
+
+        .song-selector select {
+            padding: 8px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .song-selector audio {
+            width: 300px;
+        }
+
+        /* 生成图片容器样式（全屏覆盖） */
+        #generateImage {
+            display: none; /* 初始隐藏 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* 半透明黑色背景 */
+            justify-content: center;
+            align-items: center;
+            z-index: 4; /* 高于其他元素 */
+            animation: fadeIn 0.5s forwards; /* 淡入动画 */
+        }
+
+        /* 生成图片样式 */
+        #generateImage img {
+            width: 80%; /* 根据需要调整图片大小 */
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        /* 淡入动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 淡出动画 */
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* 关闭按钮样式 */
+        #generateImage .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        /* 响应式设计 */
         @media (max-width: 768px) {
+            .stock-order-container img {
+                width: 100px; /* 更小的图片在小屏幕上 */
+            }
+
             h1 {
                 font-size: 3rem;
             }
@@ -276,69 +344,73 @@
             button {
                 padding: 10px 15px;
             }
-        }
 
-        .quantity-btn {
-            width: 30px;
-            height: 30px;
-            border: none;
-            border-radius: 50%; /* 圆形按钮 */
-            cursor: pointer;
-            font-size: 2rem;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0; /* 防止按钮被压缩 */
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+            .modal-content {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: repeat(4, auto);
+                width: 80%;
+            }
 
-        .quantity-btn:nth-child(3) {
-            background-color: #4CAF50; /* 青色 */
-            color: white;
-        }
+            .modal-content div {
+                font-size: 1.5rem; /* 调整字符大小 */
+            }
 
-        .quantity-btn:nth-child(5) {
-            background-color: #F44336; /* 红色 */
-            color: white;
-        }
+            .song-selector audio {
+                width: 100%;
+            }
 
-        .quantity-btn:hover {
-            transform: scale(1.1); /* 放大按钮 */
-            transition: transform 0.2s ease; /* 添加过渡效果 */
-        }
-
-        .quantity-btn:active {
-            transform: scale(0.95); /* 按下时缩小按钮 */
-            transition: transform 0.1s ease;
-        }
-
-        input[type="number"] {
-            width: 30px; /* 你可以根据需要调整为任何合适的大小 */
-            padding: 12px; /* 调整内边距以使输入框看起来更舒适 */
-            text-align: middle; /* 保持数字靠右对齐 */
+            /* 调整全屏图片大小 */
+            #generateImage img {
+                width: 90%;
+            }
         }
     </style>
 </head>
-<body>
-    <!-- 模式切换按钮 -->
-    <button class="toggle-mode-btn" onclick="toggleDarkMode()">切换至黑暗模式</button>
+<body class="new-year-theme">
+    <!-- 画布用于烟花动画 -->
+    <canvas id="canvas">Canvas is not supported in your browser.</canvas>
 
-    <h1>Stock Order</h1>
-    <div class="container">
-        <div class="loader">
-            <span style="--i:0;"></span>
-            <span style="--i:1;"></span>
-            <span style="--i:2;"></span>
-            <span style="--i:3;"></span>
-            <span style="--i:4;"></span>
+    <!-- 新年歌曲选择 -->
+    <div class="song-selector">
+        <label for="newYearSong">新年歌：</label>
+        <select id="newYearSong" onchange="changeSong()">
+            <option value="">请选择歌曲</option>
+            <option value="https://github.com/SmartProfits/orderpro/raw/refs/heads/main/%E5%A4%A7%E5%9C%98%E5%9C%93.mp3">大团圆</option>
+            <option value="https://github.com/SmartProfits/orderpro/raw/refs/heads/main/%E5%A4%A7%E6%97%A5%E5%AD%90.mp3">大日子</option>
+            <option value="https://github.com/SmartProfits/orderpro/raw/refs/heads/main/%E5%A4%A9%E5%A4%A9%E5%A5%BD%E5%A4%A9.mp3">天天好天</option>
+        </select>
+        <audio id="audioPlayer" controls>
+            您的浏览器不支持音频播放。
+        </audio>
+    </div>
+
+    <!-- 弹出模态框 -->
+    <div id="welcomeModal" class="modal">
+        <div class="modal-content">
+            <div>恭</div>
+            <div>大</div>
+            <div>喜</div>
+            <div>吉</div>
+            <div>发</div>
+            <div>大</div>
+            <div>财</div>
+            <div>利</div>
         </div>
     </div>
+
+    <!-- Stock Order 标题和装饰图片 -->
+    <div class="stock-order-container">
+        <img src="https://github.com/SmartProfits/orderpro/blob/main/Chinese%20Celebrations.gif?raw=true" alt="Chinese Celebrations">
+        <h1>新年如意</h1>
+        <img src="https://github.com/SmartProfits/orderpro/blob/main/Chinese%20Celebrations.gif?raw=true" alt="Chinese Celebrations">
+    </div>
+    
     <div>
         <input type="checkbox" id="addOnCheckbox" />
         <label for="addOnCheckbox">Add On</label>
     </div>
 
-    <h3>SHOP</h3>
+    <h3>福星高照</h3>
     <div class="shop-container">
         <label><input type="radio" name="store" value="*JKL*" onclick="toggleItems()" /> JKL</label>
         <label><input type="radio" name="store" value="*TOM*" onclick="toggleItems()" /> TOM</label>
@@ -346,34 +418,36 @@
         <label><input type="radio" name="store" value="*New Shop*" onclick="toggleItems()" /> New Shop</label>
     </div>
 
-    <h3>Catogory</h3>
+    <h3>招财进宝</h3>
 
     <div class="category-container">
-        <label><input type="radio" name="category" value="BanHeang" onclick="showCategory()" />BanHeang</label>
-        <label><input type="radio" name="category" value="HopHup" onclick="showCategory()" />HopHup</label>
-        <label><input type="radio" name="category" value="Chocolate" onclick="showCategory()" />Chocolate</label>
-        <label><input type="radio" name="category" value="Sotong" onclick="showCategory()" />Sotong</label>
-        <label><input type="radio" name="category" value="Coffee" onclick="showCategory()" />Coffee</label>
-        <label><input type="radio" name="category" value="Amplang" onclick="showCategory()" />Amplang</label>
-        <label><input type="radio" name="category" value="Other" onclick="showCategory()" />Other</label>
+        <label><input type="radio" name="category" value="BanHeang" onclick="showCategory()" /> BanHeang</label>
+        <label><input type="radio" name="category" value="HopHup" onclick="showCategory()" /> HopHup</label>
+        <label><input type="radio" name="category" value="Chocolate" onclick="showCategory()" /> Chocolate</label>
+        <label><input type="radio" name="category" value="Sotong" onclick="showCategory()" /> Sotong</label>
+        <label><input type="radio" name="category" value="Coffee" onclick="showCategory()" /> Coffee</label>
+        <label><input type="radio" name="category" value="Amplang" onclick="showCategory()" /> Amplang</label>
+        <label><input type="radio" name="category" value="Other" onclick="showCategory()" /> Other</label>
     </div>
 
     <input type="text" id="productSearch" placeholder="Search..." oninput="searchProduct()" autocomplete="off" />
     <div id="suggestions"></div>
-    <h3>Select items (default quantity is 1）</h3>
-    <div id="productList"></div>
+
+    <div id="productList">
+        <!-- 示例商品 -->
+    </div>
 
     <button onclick="generateText()">Generate</button>
     <button class="whatsapp-button" onclick="copyAndSendWhatsApp()">Copy And Paste to WhatsApp</button>
 
     <div id="result"></div>
+    <div id="generateImage"></div> <!-- 新增的图片容器 -->
 
     <script>
-        const SHEET_ID = '你的表格ID';
+        const SHEET_ID = '1QUB8R0-gtwNhdiPYU2rwFf_UKrGyyqCQHzIQ7AxKFLI';
         const SHEET_NAME = 'Sheet1'; // 如果你的表格页面名称不是 Sheet1，请修改这里
 
         function loadQuantitiesFromSheet() {
-            const SHEET_ID = '1QUB8R0-gtwNhdiPYU2rwFf_UKrGyyqCQHzIQ7AxKFLI';
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
             fetch(url)
@@ -396,7 +470,7 @@
                         // 更新所有商品标签显示库存数量
                         const labels = document.querySelectorAll('#productList label');
                         labels.forEach(label => {
-                            const productName = label.textContent;
+                            const productName = label.textContent.trim();
                             const stock = stockMap[productName];
                             if (stock !== undefined) {
                                 // 在商品名称后添加库存数量
@@ -580,13 +654,19 @@
                 div.innerHTML = `
                     <input type="checkbox" id="item${product.id}" ${isChecked} onchange="saveItem(${product.id}, '${product.name}')">
                     <label for="item${product.id}">${product.name}</label>
-                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-                    <input type="number"
-                           id="quantity${product.id}"
-                           min="1"
-                           value="${currentQuantity}"
-                           readonly>
-                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn lantern-btn" onclick="changeQuantity(${product.id}, 1)">
+                            🏮<span class="inner-text">+</span>
+                        </button>
+                        <input type="number"
+                               id="quantity${product.id}"
+                               min="1"
+                               value="${currentQuantity}"
+                               readonly>
+                        <button class="quantity-btn lantern-btn" onclick="changeQuantity(${product.id}, -1)">
+                            🏮<span class="inner-text">-</span>
+                        </button>
+                    </div>
                 `;
                 productList.appendChild(div);
             });
@@ -615,13 +695,16 @@
 
         function changeQuantity(id, change) {
             const quantityInput = document.getElementById('quantity' + id);
-            let currentQuantity = parseInt(quantityInput.value) || 1; // 默认值为1
+            let currentQuantity = parseInt(quantityInput.value) || 1;
 
-            // 更新数量并确保不小于1
+            // 更新数量，确保最小值为1
             currentQuantity = Math.max(1, currentQuantity + change);
             quantityInput.value = currentQuantity;
 
             saveQuantity(id); // 保存更新的数量
+
+            // 发射烟花
+            launchFirework();
         }
 
         function toggleItems() {
@@ -664,7 +747,7 @@
 
             // 添加店铺信息
             if (selectedStore) {
-                result += 'Kedai: ' + selectedStore.value;
+                result += '🧧Kedai🧧: ' + selectedStore.value;
                 if (hasAddOn) {
                     result += ' 💥Add On💥';
                 }
@@ -712,6 +795,28 @@
             result += '\nAirport Stock Order: smartprofits.github.io/order/';
             document.getElementById('result').innerText = result;
 
+            // 发射烟花
+            launchFirework();
+
+            // 显示生成的图片（全屏覆盖）
+            const generateImageContainer = document.getElementById('generateImage');
+            generateImageContainer.innerHTML = `
+                <span class="close-btn" onclick="closeGenerateImage()">&times;</span>
+                <img src="https://github.com/SmartProfits/orderpro/blob/main/caishendao.gif?raw=true" alt="生成图片" />
+            `;
+            generateImageContainer.style.display = 'flex';
+            generateImageContainer.style.animation = 'fadeIn 0.5s forwards'; // 应用淡入动画
+
+            // 5秒后自动隐藏图片
+            setTimeout(() => {
+                generateImageContainer.style.animation = 'fadeOut 0.5s forwards';
+                // 等待动画完成后隐藏
+                setTimeout(() => {
+                    generateImageContainer.innerHTML = '';
+                    generateImageContainer.style.display = 'none';
+                }, 500);
+            }, 5000);
+
             return result;
         }
 
@@ -720,26 +825,28 @@
             navigator.clipboard.writeText(text).then(() => {
                 alert('文字已复制，现在跳转到WhatsApp');
                 let whatsappURL = `https://wa.me/?text=${encodeURIComponent(text)}`;
-                window.location.href = whatsappURL;
+                window.open(whatsappURL, '_blank');
             }).catch(err => {
                 console.error('无法复制', err);
             });
+
+            // 发射烟花
+            launchFirework();
         }
 
-        // 检查是否已经选择了模式，并设置默认模式
-        function toggleDarkMode() {
-            const isDarkModeEnabled = document.body.classList.toggle('dark-mode');
-            const toggleButton = document.querySelector('.toggle-mode-btn');
-
-            if (isDarkModeEnabled) {
-                toggleButton.textContent = 'Light Mode🌞';
-                localStorage.setItem('dark-mode', 'enabled');
-            } else {
-                toggleButton.textContent = 'Dark Mode🌙';
-                localStorage.setItem('dark-mode', 'disabled');
+        // 获取商品ID通过名称
+        function getProductIdByName(productName) {
+            for (const category of Object.values(categories)) {
+                for (const product of category) {
+                    if (product.name === productName) {
+                        return product.id;
+                    }
+                }
             }
+            return null;
         }
 
+        // 搜索功能
         function searchProduct() {
             const searchText = document.getElementById('productSearch').value.toLowerCase();
             const suggestionsContainer = document.getElementById('suggestions');
@@ -766,16 +873,27 @@
             const productSearch = document.getElementById('productSearch');
             productSearch.value = '';
             const productList = document.getElementById('productList');
-            productList.innerHTML = '';
+
+            // 检查是否已存在该商品
+            if (selectedItems[product.id]) {
+                alert('该商品已被选中');
+                return;
+            }
 
             // 创建新的商品选择框
             const div = document.createElement('div');
             div.innerHTML = `
                 <input type="checkbox" id="item${product.id}" checked onchange="saveItem(${product.id}, '${product.name}')">
                 <label for="item${product.id}">${product.name}</label>
-                <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-                <input type="number" id="quantity${product.id}" min="1" value="1" onchange="saveQuantity(${product.id})">
-                <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+                <div class="quantity-controls">
+                    <button class="quantity-btn lantern-btn" onclick="changeQuantity(${product.id}, 1)">
+                        🏮<span class="inner-text">+</span>
+                    </button>
+                    <input type="number" id="quantity${product.id}" min="1" value="${product.defaultQuantity || 1}" readonly>
+                    <button class="quantity-btn lantern-btn" onclick="changeQuantity(${product.id}, -1)">
+                        🏮<span class="inner-text">-</span>
+                    </button>
+                </div>
             `;
             productList.appendChild(div);
 
@@ -790,7 +908,6 @@
 
         // 新增函数：只为特定商品加载库存信息
         function loadStockForProduct(productName) {
-            const SHEET_ID = '1QUB8R0-gtwNhdiPYU2rwFf_UKrGyyqCQHzIQ7AxKFLI';
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
             fetch(url)
@@ -808,9 +925,12 @@
                         if (stockInfo && stockInfo.c[1]) {
                             const stock = stockInfo.c[1].v;
                             // 更新特定商品的标签
-                            const label = document.querySelector(`label[for="item${product.id}"]`);
-                            if (label) {
-                                label.innerHTML = `${productName} <span style="color: #666; font-size: 0.9em;">(Stock:${stock})</span>`;
+                            const productId = getProductIdByName(productName);
+                            if (productId !== null) {
+                                const label = document.querySelector(`label[for="item${productId}"]`);
+                                if (label) {
+                                    label.innerHTML = `${productName} <span style="color: #666; font-size: 0.9em;">(Stock: ${stock})</span>`;
+                                }
                             }
                         }
                     } catch (error) {
@@ -820,22 +940,288 @@
                 .catch(error => console.error('获取数据失败:', error));
         }
 
-        // 在页面加载时设置默认语言
-        window.onload = function() {
-            const savedMode = localStorage.getItem('dark-mode');
-            if (savedMode === 'enabled') {
-                document.body.classList.add('dark-mode');
-                document.querySelector('.toggle-mode-btn').textContent = '切换至正常模式';
+        // 新年歌曲选择功能
+        function changeSong() {
+            const select = document.getElementById('newYearSong');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const selectedSong = select.value;
+
+            if (selectedSong) {
+                audioPlayer.src = selectedSong;
+                audioPlayer.play();
+            } else {
+                audioPlayer.pause();
+                audioPlayer.src = '';
             }
+        }
+
+        // 烟花相关变量和函数
+        let fireworks = [];
+        let particles = [];
+        let hue = 120;
+        let limiterTotal = 5;
+        let limiterTick = 0;
+        let timerTotal = 80;
+        let timerTick = 0;
+        let mousedown = false;
+        let mx, my;
+
+        // 获取画布和上下文
+        const canvasElement = document.getElementById('canvas');
+        const ctxCanvas = canvasElement.getContext('2d');
+        let cw = window.innerWidth;
+        let ch = window.innerHeight;
+
+        // 设置画布尺寸
+        canvasElement.width = cw;
+        canvasElement.height = ch;
+
+        // 随机数生成
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        // 计算两点距离
+        function calculateDistance(p1x, p1y, p2x, p2y) {
+            var xDistance = p1x - p2x,
+                yDistance = p1y - p2y;
+            return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+        }
+
+        // 创建烟花
+        function Firework(sx, sy, tx, ty) {
+            this.x = sx;
+            this.y = sy;
+            this.sx = sx;
+            this.sy = sy;
+            this.tx = tx;
+            this.ty = ty;
+            this.distanceToTarget = calculateDistance(sx, sy, tx, ty);
+            this.distanceTraveled = 0;
+            this.coordinates = [];
+            this.coordinateCount = 3;
+            while(this.coordinateCount--) {
+                this.coordinates.push([this.x, this.y]);
+            }
+            this.angle = Math.atan2(ty - sy, tx - sx);
+            this.speed = 2;
+            this.acceleration = 1.05;
+            this.brightness = random(50, 70);
+            this.targetRadius = 1;
+        }
+
+        // 更新烟花
+        Firework.prototype.update = function(index) {
+            this.coordinates.pop();
+            this.coordinates.unshift([this.x, this.y]);
+
+            if(this.targetRadius < 8) {
+                this.targetRadius += 0.3;
+            } else {
+                this.targetRadius = 1;
+            }
+
+            this.speed *= this.acceleration;
+
+            var vx = Math.cos(this.angle) * this.speed,
+                vy = Math.sin(this.angle) * this.speed;
+            this.distanceTraveled = calculateDistance(this.sx, this.sy, this.x + vx, this.y + vy);
+
+            if(this.distanceTraveled >= this.distanceToTarget) {
+                createParticles(this.tx, this.ty);
+                fireworks.splice(index, 1);
+            } else {
+                this.x += vx;
+                this.y += vy;
+            }
+        }
+
+        // 绘制烟花
+        Firework.prototype.draw = function() {
+            ctxCanvas.beginPath();
+            ctxCanvas.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+            ctxCanvas.lineTo(this.x, this.y);
+            ctxCanvas.strokeStyle = 'hsl(' + hue + ', 100%, ' + this.brightness + '%)';
+            ctxCanvas.stroke();
+
+            ctxCanvas.beginPath();
+            ctxCanvas.arc(this.tx, this.ty, this.targetRadius, 0, Math.PI * 2);
+            ctxCanvas.stroke();
+        }
+
+        // 创建粒子
+        function Particle(x, y) {
+            this.x = x;
+            this.y = y;
+            this.coordinates = [];
+            this.coordinateCount = 5;
+            while(this.coordinateCount--) {
+                this.coordinates.push([this.x, this.y]);
+            }
+            this.angle = random(0, Math.PI * 2);
+            this.speed = random(1, 10);
+            this.friction = 0.95;
+            this.gravity = 1;
+            this.hue = random(hue - 50, hue + 50);
+            this.brightness = random(50, 80);
+            this.alpha = 1;
+            this.decay = random(0.015, 0.03);
+        }
+
+        // 更新粒子
+        Particle.prototype.update = function(index) {
+            this.coordinates.pop();
+            this.coordinates.unshift([this.x, this.y]);
+            this.speed *= this.friction;
+            this.x += Math.cos(this.angle) * this.speed;
+            this.y += Math.sin(this.angle) * this.speed + this.gravity;
+            this.alpha -= this.decay;
+
+            if(this.alpha <= this.decay) {
+                particles.splice(index, 1);
+            }
+        }
+
+        // 绘制粒子
+        Particle.prototype.draw = function() {
+            ctxCanvas.beginPath();
+            ctxCanvas.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+            ctxCanvas.lineTo(this.x, this.y);
+            ctxCanvas.strokeStyle = 'hsla(' + this.hue + ', 100%, ' + this.brightness + '%, ' + this.alpha + ')';
+            ctxCanvas.stroke();
+        }
+
+        // 创建粒子群
+        function createParticles(x, y) {
+            var particleCount = 30;
+            while(particleCount--) {
+                particles.push(new Particle(x, y));
+            }
+        }
+
+        // 主循环
+        function loop() {
+            requestAnimFrame(loop);
+
+            hue = random(0, 360);
+
+            ctxCanvas.globalCompositeOperation = 'destination-out';
+            ctxCanvas.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctxCanvas.fillRect(0, 0, cw, ch);
+            ctxCanvas.globalCompositeOperation = 'lighter';
+
+            var i = fireworks.length;
+            while(i--) {
+                fireworks[i].draw();
+                fireworks[i].update(i);
+            }
+
+            var i = particles.length;
+            while(i--) {
+                particles[i].draw();
+                particles[i].update(i);
+            }
+
+            if(timerTick >= timerTotal) {
+                if(!mousedown) {
+                    fireworks.push(new Firework(cw / 2, ch, random(0, cw), random(0, ch / 2)));
+                    timerTick = 0;
+                }
+            } else {
+                timerTick++;
+            }
+
+            if(limiterTick >= limiterTotal) {
+                if(mousedown) {
+                    fireworks.push(new Firework(cw / 2, ch, mx, my));
+                    limiterTick = 0;
+                }
+            } else {
+                limiterTick++;
+            }
+        }
+
+        // 启动烟花动画
+        function startFireworks() {
+            loop();
+        }
+
+        // 发射烟花函数
+        function launchFirework(x = random(0, cw), y = random(0, ch / 2)) {
+            fireworks.push(new Firework(cw / 2, ch, x, y));
+        }
+
+        // 全局点击事件监听器，点击任何地方发射烟花
+        document.addEventListener('click', function(e) {
+            const rect = canvasElement.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            launchFirework(x, y);
+        });
+
+        // 初始化页面加载
+        window.onload = function() {
+            loadQuantitiesFromSheet();
             toggleItems(); // 初始化商品选择框
+
+            // 显示欢迎模态框
+            const modal = document.getElementById('welcomeModal');
+            modal.style.display = 'block';
+
+            // 启动烟花动画
+            startFireworks();
 
             // 添加定时刷新
             setInterval(loadQuantitiesFromSheet, 30000);
         }
 
-        // 其他代码省略...
+        // 关闭模态框的函数
+        function closeModal() {
+            const modal = document.getElementById('welcomeModal');
+            modal.style.display = 'none';
+        }
+
+        // 点击模态框内容外部区域关闭模态框
+        document.getElementById('welcomeModal').addEventListener('click', function(event) {
+            if (event.target == this) {
+                closeModal();
+            }
+        });
+
+        // 请求动画帧兼容性处理
+        window.requestAnimFrame = (function() {
+            return window.requestAnimationFrame ||
+                   window.webkitRequestAnimationFrame ||
+                   window.mozRequestAnimationFrame ||
+                   function(callback) {
+                       window.setTimeout(callback, 1000 / 60);
+                   };
+        })();
+
+        // 关闭全屏图片的函数
+        function closeGenerateImage() {
+            const generateImageContainer = document.getElementById('generateImage');
+            generateImageContainer.style.animation = 'fadeOut 0.5s forwards';
+            setTimeout(() => {
+                generateImageContainer.innerHTML = '';
+                generateImageContainer.style.display = 'none';
+            }, 500);
+        }
     </script>
 
     <p class="contact-info">If you have any questions or need to add new products, please contact me (Mark).</p>
+    <p class="contact-info">
+        🧧恭祝大家🧧<br>
+        🧧吉祥如意🧧<br>
+        🧧财源广进🧧<br>
+        🧧万事如意🧧<br>
+        🧧恭喜发财🧧<br>
+        🧧步步高升🧧<br>
+        🧧平安喜乐🧧<br>
+        🧧富贵荣华🧧<br>
+        🧧事事顺心🧧<br>
+        🧧福星高照🧧<br>
+        🧧一帆风顺🧧
+    </p>
 </body>
 </html>
