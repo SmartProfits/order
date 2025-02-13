@@ -717,6 +717,48 @@
         body:not(.dark-mode) #settings-panel button:hover {
             background: #f5f5f5;
         }
+
+        /* 低性能模式的样式 */
+        .low-perf-mode .glass-effect,
+        .low-perf-mode #productList div,
+        .low-perf-mode button,
+        .low-perf-mode #result,
+        .low-perf-mode #productSearch,
+        .low-perf-mode #suggestions,
+        .low-perf-mode .contact-info,
+        .low-perf-mode .shop-card,
+        .low-perf-mode .category-card,
+        .low-perf-mode #settings-panel,
+        .low-perf-mode #preview-window,
+        .low-perf-mode #preview-icon {
+            /* 替换所有磨砂玻璃效果为简单半透明背景 */
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* 深色模式下的低性能样式 */
+        .low-perf-mode.dark-mode .glass-effect,
+        .low-perf-mode.dark-mode #productList div,
+        .low-perf-mode.dark-mode button,
+        .low-perf-mode.dark-mode #result,
+        .low-perf-mode.dark-mode #productSearch,
+        .low-perf-mode.dark-mode #suggestions,
+        .low-perf-mode.dark-mode .contact-info,
+        .low-perf-mode.dark-mode .shop-card,
+        .low-perf-mode.dark-mode .category-card,
+        .low-perf-mode.dark-mode #settings-panel,
+        .low-perf-mode.dark-mode #preview-window,
+        .low-perf-mode.dark-mode #preview-icon {
+            background: rgba(30, 30, 30, 0.8) !important;
+        }
+
+        /* 禁用所有动画效果 */
+        .low-perf-mode * {
+            animation: none !important;
+            transition: none !important;
+        }
     </style>
 </head>
 <body>
@@ -821,6 +863,22 @@
                        style="flex-grow: 1;"
                        onchange="changeFontSize(this.value)">
                 <span style="font-size: 1.2em;">大</span>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 10px;">Performance Mode</label>
+            <div style="display: flex; gap: 10px;">
+                <button id="high-perf-btn" 
+                        onclick="togglePerformanceMode(false)" 
+                        style="flex: 1; padding: 8px; border-radius: 5px; text-align: center;">
+                    High 💫
+                </button>
+                <button id="low-perf-btn" 
+                        onclick="togglePerformanceMode(true)" 
+                        style="flex: 1; padding: 8px; border-radius: 5px; text-align: center;">
+                    Smooth ✨
+                </button>
             </div>
         </div>
     </div>
@@ -1428,6 +1486,10 @@
             
             // 添加定时刷新
             setInterval(loadQuantitiesFromSheet, 30000);
+
+            // 加载性能模式设置
+            const isLowPerfMode = localStorage.getItem('lowPerfMode') === 'true';
+            togglePerformanceMode(isLowPerfMode);
         }
 
         // 添加选择效果的JavaScript
@@ -1473,6 +1535,11 @@
         }
 
         function addRippleEffect(element, event) {
+            // 在低性能模式下不添加涟漪效果
+            if (document.body.classList.contains('low-perf-mode')) {
+                return;
+            }
+            
             const ripple = document.createElement('div');
             ripple.classList.add('ripple');
             
@@ -1588,6 +1655,20 @@
                 settingsPanel.style.display = 'none';
             }
         });
+
+        // 添加性能模式切换函数
+        function togglePerformanceMode(isLowPerf) {
+            if (isLowPerf) {
+                document.body.classList.add('low-perf-mode');
+                document.getElementById('low-perf-btn').style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                document.getElementById('high-perf-btn').style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+            } else {
+                document.body.classList.remove('low-perf-mode');
+                document.getElementById('low-perf-btn').style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                document.getElementById('high-perf-btn').style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+            }
+            localStorage.setItem('lowPerfMode', isLowPerf);
+        }
     </script>
 
     <p class="contact-info">🌟If you have any questions or suggestion please contact me (Mark).<br>🌟Rowan now will help me to update stock amount.</p>
