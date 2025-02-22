@@ -718,6 +718,70 @@
             background: #f5f5f5;
         }
 
+        /* 图片预览模态框样式 */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* 修改查看图片按钮样式 */
+        .view-image-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 5px;
+            transition: all 0.3s ease;
+            vertical-align: middle;
+            line-height: 1;
+        }
+
+        .view-image-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode .view-image-btn {
+            color: #fff;
+        }
+
+        body:not(.dark-mode) .view-image-btn {
+            color: #333;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
         /* 低性能模式的样式 */
         .low-perf-mode .glass-effect,
         .low-perf-mode #productList div,
@@ -760,6 +824,10 @@
             transition: none !important;
         }
     </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 </head>
 <body>
     <!-- 在 body 开始处添加浮动预览窗口 -->
@@ -850,6 +918,23 @@
             </div>
         </div>
         
+        <!-- 添加低性能模式选项 -->
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 10px;">Performance Mode</label>
+            <div style="display: flex; gap: 10px;">
+                <button id="high-perf-btn" 
+                        onclick="togglePerformanceMode(false)" 
+                        style="flex: 1; padding: 8px; border-radius: 5px; text-align: center;">
+                    High 💫
+                </button>
+                <button id="low-perf-btn" 
+                        onclick="togglePerformanceMode(true)" 
+                        style="flex: 1; padding: 8px; border-radius: 5px; text-align: center;">
+                    Smooth ✨
+                </button>
+            </div>
+        </div>
+        
         <div>
             <label style="display: block; margin-bottom: 10px;">Font Size</label>
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -866,18 +951,18 @@
             </div>
         </div>
 
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 10px;">Performance Mode</label>
+        <div style="margin-top: 20px;">
+            <label style="display: block; margin-bottom: 10px;">Vibration</label>
             <div style="display: flex; gap: 10px;">
-                <button id="high-perf-btn" 
-                        onclick="togglePerformanceMode(false)" 
+                <button id="vibration-on-btn" 
+                        onclick="toggleVibration(true)" 
                         style="flex: 1; padding: 8px; border-radius: 5px; text-align: center;">
-                    High 💫
+                    On 📳
                 </button>
-                <button id="low-perf-btn" 
-                        onclick="togglePerformanceMode(true)" 
+                <button id="vibration-off-btn" 
+                        onclick="toggleVibration(false)" 
                         style="flex: 1; padding: 8px; border-radius: 5px; text-align: center;">
-                    Smooth ✨
+                    Off 🔕
                 </button>
             </div>
         </div>
@@ -997,58 +1082,109 @@
     <h3>Select items (default quantity is 1）</h3>
     <div id="productList"></div>
 
+    <div id="imageModal" class="image-modal" style="display: none;">
+        <span class="close-modal" onclick="closeImageModal()">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Product Image">
+        </div>
+    </div>
+
+    <div class="setting-menu">
+        <!-- 删除这两个设置项 -->
+    </div>
+
     <script>
-        const SHEET_ID = '你的表格ID';
-        const SHEET_NAME = 'Sheet1'; // 如果你的表格页面名称不是 Sheet1，请修改这里
+        const firebaseConfig = {
+            apiKey: "AIzaSyDAK5KVv9oln2qS5EfNzox1snM19wa83-o",
+            authDomain: "smart-profits-stock.firebaseapp.com",
+            databaseURL: "https://smart-profits-stock-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "smart-profits-stock",
+            storageBucket: "smart-profits-stock.firebasestorage.app",
+            messagingSenderId: "1029424292465",
+            appId: "1:1029424292465:web:6de46925db8818d462b1d0",
+            measurementId: "G-R0K4Q7JTGE"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
         // 添加一个全局变量来存储库存信息
         let stockMap = {};
 
-        function loadQuantitiesFromSheet() {
-            const SHEET_ID = '1QUB8R0-gtwNhdiPYU2rwFf_UKrGyyqCQHzIQ7AxKFLI';
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
-
-            fetch(url)
-                .then(response => response.text())
-                .then(data => {
-                    try {
-                        const jsonData = JSON.parse(data.substr(47).slice(0, -2));
-                        const rows = jsonData.table.rows;
-
-                        // 更新全局 stockMap
-                        stockMap = {};
-                        rows.forEach(row => {
-                            if(row.c[0] && row.c[1]) {
-                                const productName = row.c[0].v;
-                                const stockQuantity = row.c[1].v;
-                                stockMap[productName] = stockQuantity;
+        function loadQuantitiesFromFirebase() {
+            const locations = ['office', 'kepayan'];
+            
+            locations.forEach(location => {
+                db.ref(`inventory/${location}`).on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    
+                    if (data) {
+                        Object.entries(data).forEach(([itemId, item]) => {
+                            // 更新库存数量
+                            if (stockMap[item.name]) {
+                                stockMap[item.name] = Math.max(stockMap[item.name], item.quantity);
+                            } else {
+                                stockMap[item.name] = item.quantity;
+                            }
+                            
+                            // 如果有图片URL，更新到对应的商品数据中
+                            if (item.imageUrl) {
+                                // 遍历所有分类查找对应商品
+                                Object.values(categories).forEach(products => {
+                                    const product = products.find(p => p.name === item.name);
+                                    if (product) {
+                                        product.imageUrl = item.imageUrl;
+                                    }
+                                });
                             }
                         });
-
-                        // 更新标签显示
-                        const labels = document.querySelectorAll('#productList label');
-                        labels.forEach(label => {
-                            const productName = label.textContent;
-                            const stock = stockMap[productName];
-                            if (stock !== undefined) {
-                                const stockClass = stock === 0 ? 'zero-stock' : '';
-                                label.innerHTML = `${productName} <span class="${stockClass}">(Stock: ${stock})</span>`;
-                            }
-                        });
-
-                        // 更新预览窗口
-                        updatePreview();
-                    } catch (error) {
-                        console.error('解析数据错误:', error);
                     }
-                })
-                .catch(error => console.error('获取数据失败:', error));
+                    
+                    // 更新显示
+                    updateStockDisplay();
+                    updatePreview();
+                }, (error) => {
+                    if (error) {
+                        console.error('读取库存数据错误:', error);
+                        const productList = document.getElementById('productList');
+                        if (productList) {
+                            productList.innerHTML = '<div class="error-message">无法加载库存信息，请稍后再试</div>';
+                        }
+                    }
+                });
+            });
+        }
+
+        // 修改 updateStockDisplay 函数
+        function updateStockDisplay() {
+            Object.entries(categories).forEach(([category, products]) => {
+                products.forEach(product => {
+                    const label = document.querySelector(`label[for="item${product.id}"]`);
+                    if (label) {
+                        const stock = stockMap[product.name] || 0;
+                        const stockClass = stock === 0 ? 'zero-stock' : '';
+                        const stockText = stock === 0 ? '(缺货)' : `(Stock: ${stock})`;
+                        
+                        // 添加查看图片按钮（如果有图片URL）
+                        const viewImageButton = product.imageUrl ? 
+                            `<button class="view-image-btn" onclick="showImage('${product.imageUrl}', '${product.name}')">View</button>` : '';
+                        
+                        // 修改这里，将 viewImageButton 放在 stockText 后面
+                        label.innerHTML = `${product.name} <span class="${stockClass}">${stockText} ${viewImageButton}</span>`;
+                    }
+                });
+            });
         }
 
         // 分类商品
         const categories = {
             BanHeang: [
-                { id: 101, name: "BH Tambun Original" },
+                { 
+                    id: 101, 
+                    name: "BH Tambun Original",
+                    imageUrl: "https://example.com/path/to/image.jpg" // 添加图片URL
+                },
                 { id: 102, name: "BH Tambun Pandan" },
                 { id: 103, name: "BH Tambun White Lotus" },
                 { id: 104, name: "BH Tau Sar Pheah" },
@@ -1058,8 +1194,8 @@
                 { id: 107, name: "BH Phong Pheah" },
                 { id: 108, name: "BH Pepper Biscuit" },
                 { id: 109, name: "BH Hup Toh Soh" },
-                { id: 110, name: "BH Omlette Crisp Chocolate" },
-                { id: 111, name: "BH Omlette Crisp Pandan" },
+                { id: 110, name: "BH Omelette Crisp Chocolate" },
+                { id: 111, name: "BH Omelette Crisp Pandan" },
                 { id: 112, name: "BH Kai Chai Biscuit" },
                 { id: 113, name: "BH Almond Slice" },
                 { id: 114, name: "BH Almond Slice Salted Egg" },
@@ -1077,13 +1213,13 @@
                 { id: 126, name: "BH Shat Kek Ma" },
                 { id: 127, name: "BH Shat Kek Ma (Brown Sugar)" },
                 { id: 128, name: "BH Coconut Biscuits" },
-                { id: 129, name: "BH FD Durian 50g" },
-                { id: 130, name: "BH FD Mango 50g" },
-                { id: 131, name: "BH FD Durian 30g" },
-                { id: 160, name: "BH FD Mango 30g" },
-                { id: 161, name: "BH FD Cempedak 25g" },
-                { id: 162, name: "BH FD Jackfruit 30g" },
-                { id: 167, name: "BH FD Strawberry 20g" },
+                { id: 129, name: "BH Freeze Dried Durian 50g" },
+                { id: 130, name: "BH Freeze Dried Mango 50g" },
+                { id: 131, name: "BH Freeze Dried Durian 30g" },
+                { id: 160, name: "BH Freeze Dried Mango 30g" },
+                { id: 161, name: "BH Freeze Dried Cempedak 25g" },
+                { id: 162, name: "BH Freeze Dried Jackfruit 30g" },
+                { id: 167, name: "BH Freeze Dried Strawberry 20g" },
                 { id: 132, name: "BH Butter Cookies" },
                 { id: 133, name: "BH Chocolate Cookies" },
                 { id: 134, name: "BH Raisin Cookies" },
@@ -1098,7 +1234,7 @@
                 { id: 143, name: "BH Mochi Milk Mango Filling" },
                 { id: 144, name: "BH Mochi Milk Green Tea" },
                 { id: 145, name: "BH Sotong Cuttlefish" },
-                { id: 146, name: "BH Gula Cuttlefish" },
+                { id: 146, name: "BH Gula Sotong Cuttlefish" },
                 { id: 147, name: "BH Satay Fish" },
                 { id: 148, name: "BH Fillet Cracker With Anchovy" },
                 { id: 149, name: "BH Fillet Cracker With Seaweed" },
@@ -1117,24 +1253,23 @@
                 { id: 165, name: "Durian Marshmallow" },
             ],
             HopHup: [
-                { id: 201, name: "HT Durian Tart" },
-                { id: 202, name: "HT Mango Tart" },
-                { id: 203, name: "HT Durian Wafer Roll" },
-                { id: 204, name: "HT Mango Wafer Roll" },
-				{ id: 221, name: "HT Dried Fruit Mango" },
-                { id: 205, name: "HT Omelette Durian" },
-                { id: 206, name: "HT Coconut Ori Cookies" },
-                { id: 207, name: "HT Coconut Pandan Cookies" },
-                { id: 208, name: "HT Dodol Original" },
-                { id: 209, name: "HT Dodol Kopi" },
-                { id: 210, name: "HT Dodol Durian" },
-                { id: 211, name: "HT Freeze Dried Mango" },
-                { id: 212, name: "HT Freeze Dried Durian" },
+                { id: 201, name: "HH Durian Tart" },
+                { id: 202, name: "HH Mango Tart" },
+                { id: 203, name: "HH Durian Wafer Roll" },
+                { id: 204, name: "HH Mango Wafer Roll" },
+                { id: 205, name: "HH Omelette Crisp Durian" },
+                { id: 206, name: "HH Coconut Ori Cookies" },
+                { id: 207, name: "HH Coconut Pandan Cookies" },
+                { id: 208, name: "HH Dodol Original" },
+                { id: 209, name: "HH Dodol Kopi" },
+                { id: 210, name: "HH Dodol Durian" },
+                { id: 211, name: "HH Freeze Dried Mango" },
+                { id: 212, name: "HH Freeze Dried Durian" },
                 { id: 213, name: "Salted Egg Fish Skin" },
                 { id: 214, name: "Salted Egg Fish Skin Spicy" },
                 { id: 215, name: "Salted Egg Salmon Skin" },
                 { id: 216, name: "Musang King Durian Candy" },
-                { id: 217, name: "HT Durian Cookies" },
+                { id: 217, name: "HH Durian Cookies" },
                 { id: 218, name: "Fish Chips Classic" },
                 { id: 219, name: "Salted Egg Fish Chips" },
                 { id: 220, name: "Salted Egg Fish Chips Mala" }
@@ -1163,15 +1298,15 @@
                 { id: 406, name: "Cuttlefish Whole" },
                 { id: 407, name: "Cuttlefish Roasted" },
                 { id: 408, name: "Cuttlefish Chili" },
-                { id: 409, name: "Cuttle Fish Slices" },
-                { id: 410, name: "Cuttle Fish Sugar" },
+                { id: 409, name: "Cuttlefish Slices" },
+                { id: 410, name: "Cuttlefish Sugar" },
                 { id: 411, name: "Five Star Cuttlefish" }
             ],
             Coffee: [
-                { id: 501, name: "BH W/Coffee(Mini)" },
-                { id: 502, name: "BH W/Coffee(Mini)No Sugar" },
-                { id: 503, name: "BH Durian W/Coffee(Mini)" },
-                { id: 504, name: "BH Teh Tarik(Mini)" },
+                { id: 501, name: "BH White Coffee Mini" },
+                { id: 502, name: "BH White Coffee NS Mini" },
+                { id: 503, name: "BH Durian White Coffee Mini" },
+                { id: 504, name: "BH Teh Tarik Mini" },
                 { id: 505, name: "BH W/Coffee" },
                 { id: 506, name: "BH W/Coffee No Sugar" },
                 { id: 507, name: "BH Kopi O 2in1" },
@@ -1190,7 +1325,7 @@
                 { id: 603, name: "Amplang Sotong", unit: 'pkt', defaultQuantity: 1 }
             ],
             Other: [
-                { id: 701, name: "Fruity Gummy Assorted" },
+                 { id: 701, name: "Fruity Gummy Assorted" },
                 { id: 702, name: "Fruity Gummy Mango" },
 		{ id: 710, name: "Sour Gummy Blackcurrant" },
 		{ id: 711, name: "Sour Gummy Apple" },
@@ -1213,13 +1348,19 @@
             products.forEach(product => {
                 const div = document.createElement('div');
                 const isChecked = selectedItems[product.id] ? 'checked' : '';
-                // 使用商品的默认数量或者已保存的数量，如果都没有则使用1
                 const defaultQuantity = product.defaultQuantity || 1;
                 const currentQuantity = selectedItems[product.id] || defaultQuantity;
+                
+                // 添加查看图片按钮
+                const viewImageButton = product.imageUrl ? 
+                    `<button class="view-image-btn" onclick="showImage('${product.imageUrl}', '${product.name}')">View</button>` : '';
 
                 div.innerHTML = `
                     <input type="checkbox" id="item${product.id}" ${isChecked} onchange="saveItem(${product.id}, '${product.name}')">
-                    <label for="item${product.id}">${product.name}</label>
+                    <label for="item${product.id}">
+                        ${product.name}
+                        ${viewImageButton}
+                    </label>
                     <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
                     <input type="number"
                            id="quantity${product.id}"
@@ -1231,32 +1372,87 @@
                 productList.appendChild(div);
             });
 
-            // 加载并显示库存数量
-            loadQuantitiesFromSheet();
+            loadQuantitiesFromFirebase();
         }
 
+        // 添加显示图片的函数
+        function showImage(imageUrl, productName) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            
+            modalImg.src = imageUrl;
+            modalImg.alt = productName;
+            modal.style.display = "flex";
+            
+            // 添加震动反馈
+            vibrate();
+        }
+
+        // 添加关闭模态框的函数
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = "none";
+            
+            // 添加震动反馈
+            vibrate();
+        }
+
+        // 点击模态框背景关闭
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImageModal();
+            }
+        });
+
+        // 添加震动相关的函数和变量
+        let vibrationEnabled = localStorage.getItem('vibration-enabled') !== 'disabled';
+
+        // 触发震动的函数
+        function vibrate(duration = 50) {
+            if (vibrationEnabled && window.navigator.vibrate) {
+                window.navigator.vibrate(duration);
+            }
+        }
+
+        // 切换震动设置
+        function toggleVibration(enable) {
+            vibrationEnabled = enable;
+            localStorage.setItem('vibration-enabled', enable ? 'enabled' : 'disabled');
+            
+            const onBtn = document.getElementById('vibration-on-btn');
+            const offBtn = document.getElementById('vibration-off-btn');
+            
+            if (enable) {
+                onBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                offBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                vibrate(100); // 开启时的反馈震动
+            } else {
+                onBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                offBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+            }
+        }
+
+        // 修改 saveItem 函数，添加震动
         function saveItem(id, name) {
             const checkbox = document.getElementById('item' + id);
             const quantity = document.getElementById('quantity' + id).value || 1;
             const previewWindow = document.getElementById('preview-window');
             const previewIcon = document.getElementById('preview-icon');
 
+            vibrate(); // 添加震动反馈
+
             if (checkbox.checked) {
                 selectedItems[id] = quantity;
-                // 检查是否是第一个被选中的物品
                 if (Object.keys(selectedItems).length === 1) {
-                    // 如果是第一个选中的物品，且允许自动显示，则显示预览窗口
                     if (allowAutoShow) {
                         previewWindow.style.display = 'block';
                         previewIcon.style.display = 'none';
                     } else {
-                        // 如果不允许自动显示预览窗口，则显示预览图标
                         previewIcon.style.display = 'flex';
                     }
                 }
             } else {
                 delete selectedItems[id];
-                // 如果没有选中的物品，同时隐藏预览窗口和预览图标
                 if (Object.keys(selectedItems).length === 0) {
                     previewWindow.style.display = 'none';
                     previewIcon.style.display = 'none';
@@ -1274,6 +1470,7 @@
         }
 
         function changeQuantity(id, change) {
+            vibrate(); // 添加震动反馈
             const quantityInput = document.getElementById('quantity' + id);
             let currentQuantity = parseInt(quantityInput.value) || 1;
             currentQuantity = Math.max(1, currentQuantity + change);
@@ -1425,57 +1622,35 @@
             const productList = document.getElementById('productList');
             productList.innerHTML = '';
 
-            // 创建新的商品选择框
             const div = document.createElement('div');
+            const stock = stockMap[product.name] || 0;
+            const stockClass = stock === 0 ? 'zero-stock' : '';
+            const stockText = stock === 0 ? '(缺货)' : `(Stock: ${stock})`;
+
             div.innerHTML = `
                 <input type="checkbox" id="item${product.id}" checked onchange="saveItem(${product.id}, '${product.name}')">
-                <label for="item${product.id}">${product.name}</label>
+                <label for="item${product.id}">${product.name} <span class="${stockClass}">${stockText}</span></label>
                 <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
                 <input type="number" id="quantity${product.id}" min="1" value="1" onchange="saveQuantity(${product.id})">
                 <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
             `;
             productList.appendChild(div);
 
-            // 保存新选择的商品
             saveItem(product.id, product.name);
-
-            // 立即为这个特定商品加载库存信息
-            loadStockForProduct(product.name);
-
             document.getElementById('suggestions').innerHTML = '';
         }
 
         // 新增函数：只为特定商品加载库存信息
         function loadStockForProduct(productName) {
-            const SHEET_ID = '1QUB8R0-gtwNhdiPYU2rwFf_UKrGyyqCQHzIQ7AxKFLI';
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
-
-            fetch(url)
-                .then(response => response.text())
-                .then(data => {
-                    try {
-                        const jsonData = JSON.parse(data.substr(47).slice(0, -2));
-                        const rows = jsonData.table.rows;
-
-                        // 查找特定商品的库存
-                        const stockInfo = rows.find(row =>
-                            row.c[0] && row.c[0].v === productName
-                        );
-
-                        if (stockInfo && stockInfo.c[1]) {
-                            const stock = stockInfo.c[1].v;
-                            const stockClass = stock === 0 ? 'zero-stock' : '';
-                            // 更新特定商品的标签
-                            const label = document.querySelector(`label[for="item${product.id}"]`);
-                            if (label) {
-                                label.innerHTML = `${productName} <span class="${stockClass}">(Stock: ${stock})</span>`;
-                            }
-                        }
-                    } catch (error) {
-                        console.error('解析数据错误:', error);
-                    }
-                })
-                .catch(error => console.error('获取数据失败:', error));
+            // 从 stockMap 中获取库存信息
+            const stock = stockMap[productName] || 0;
+            const stockClass = stock === 0 ? 'zero-stock' : '';
+            
+            // 更新特定商品的标签
+            const label = document.querySelector(`label[for="item${product.id}"]`);
+            if (label) {
+                label.innerHTML = `${productName} <span class="${stockClass}">(Stock: ${stock})</span>`;
+            }
         }
 
         // 在页面加载时设置默认语言
@@ -1487,53 +1662,43 @@
             
             toggleItems(); // 初始化商品选择框
             
-            // 添加定时刷新
-            setInterval(loadQuantitiesFromSheet, 30000);
-
-            // 加载性能模式设置
-            const isLowPerfMode = localStorage.getItem('lowPerfMode') === 'true';
-            togglePerformanceMode(isLowPerfMode);
+            // 先进行匿名认证
+            firebase.auth().signInAnonymously()
+                .then(() => {
+                    console.log('Anonymous auth successful');
+                })
+                .catch((error) => {
+                    console.error('Anonymous auth failed:', error);
+                    const productList = document.getElementById('productList');
+                    if (productList) {
+                        productList.innerHTML = '<div class="error-message">无法连接到数据库，请稍后再试</div>';
+                    }
+                });
         }
 
         // 添加选择效果的JavaScript
         function selectShop(element, value) {
-            // 移除其他店铺的选中状态
+            vibrate(); // 添加震动反馈
             document.querySelectorAll('.shop-card').forEach(card => {
                 card.classList.remove('selected');
             });
             
-            // 添加选中状态
             element.classList.add('selected');
-            
-            // 选中radio按钮
             element.querySelector('input[type="radio"]').checked = true;
-            
-            // 添加涟漪效果
             addRippleEffect(element, event);
-            
-            // 触发原有的toggleItems函数
             toggleItems();
-            
-            // 更新预览窗口
             updatePreview();
         }
 
         function selectCategory(element, value) {
-            // 移除其他分类的选中状态
+            vibrate(); // 添加震动反馈
             document.querySelectorAll('.category-card').forEach(card => {
                 card.classList.remove('selected');
             });
             
-            // 添加选中状态
             element.classList.add('selected');
-            
-            // 选中radio按钮
             element.querySelector('input[type="radio"]').checked = true;
-            
-            // 添加涟漪效果
             addRippleEffect(element, event);
-            
-            // 触发原有的showCategory函数
             showCategory();
         }
 
@@ -1627,6 +1792,14 @@
             // 加载保存的主题设置
             const isDarkMode = localStorage.getItem('dark-mode') === 'enabled';
             changeTheme(isDarkMode ? 'dark' : 'light');
+            
+            // 初始化震动设置
+            const isVibrationEnabled = localStorage.getItem('vibration-enabled') !== 'disabled';
+            toggleVibration(isVibrationEnabled);
+            
+            // 加载性能模式设置
+            const isLowPerfMode = localStorage.getItem('lowPerfMode') === 'true';
+            togglePerformanceMode(isLowPerfMode);
         });
 
         // 修改主题切换函数
@@ -1659,6 +1832,38 @@
             }
         });
 
+        // 修改认证状态监听
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                console.log('User is signed in:', user.uid);
+                loadQuantitiesFromFirebase();
+            } else {
+                console.log('User is signed out');
+                const productList = document.getElementById('productList');
+                if (productList) {
+                    productList.innerHTML = '<div class="error-message">请稍等，正在连接数据库...</div>';
+                }
+            }
+        });
+
+        // 添加低性能模式的处理逻辑
+        const lowPerfModeToggle = document.getElementById('lowPerfModeToggle');
+        lowPerfModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('low-perf-mode');
+            } else {
+                document.body.classList.remove('low-perf-mode');
+            }
+            // 保存设置到 localStorage
+            localStorage.setItem('lowPerfMode', this.checked);
+        });
+
+        // 页面加载时检查之前的设置
+        if (localStorage.getItem('lowPerfMode') === 'true') {
+            lowPerfModeToggle.checked = true;
+            document.body.classList.add('low-perf-mode');
+        }
+
         // 添加性能模式切换函数
         function togglePerformanceMode(isLowPerf) {
             if (isLowPerf) {
@@ -1674,7 +1879,7 @@
         }
     </script>
 
-    <p class="contact-info">🌟If you have any questions or suggestion please contact me (Mark).<br>🌟Rowan now will help me to update stock amount.</p>
+    <p class="contact-info">🌟If you have any questions or suggestion please contact me (Mark).<br>🌟Stock quantity now will auto update from stock system!.</p>
  
 </body>
 </html>
