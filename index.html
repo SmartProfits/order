@@ -891,9 +891,9 @@
     <!-- 保留设置面板，但调整位置 -->
     <div id="settings-panel" class="glass-effect" style="
         position: absolute;
-        top: 200px;
+        top: 180px;
         right: 20px;
-        width: 300px;
+        width: 250px;
         padding: 20px;
         z-index: 1000;
         display: none;">
@@ -935,22 +935,6 @@
             </div>
         </div>
         
-                <div style="margin-top: 20px;">
-            <label style="display: block; margin-bottom: 10px;">Vibration</label>
-            <div style="display: flex; gap: 10px;">
-                <button id="vibration-on-btn" 
-                        onclick="toggleVibration(true)" 
-                        style="flex: 1; padding: 8px; border-radius: 5px; text-align: center;">
-                    On 📳
-                </button>
-                <button id="vibration-off-btn" 
-                        onclick="toggleVibration(false)" 
-                        style="flex: 1; padding: 8px; border-radius: 5px; text-align: center;">
-                    Off 🔕
-                </button>
-            </div>
-        </div>
-        
         <div>
             <label style="display: block; margin-bottom: 10px;">Font Size</label>
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -966,9 +950,23 @@
                 <span style="font-size: 1.2em;">大</span>
             </div>
         </div>
-      
+
+        <div style="margin-top: 20px;">
+            <label style="display: block; margin-bottom: 10px;">Vibration</label>
+            <div style="display: flex; gap: 10px;">
+                <button id="vibration-on-btn" 
+                        onclick="toggleVibration(true)" 
+                        style="flex: 1; padding: 8px; border-radius: 5px; text-align: center;">
+                    On 📳
+                </button>
+                <button id="vibration-off-btn" 
+                        onclick="toggleVibration(false)" 
+                        style="flex: 1; padding: 8px; border-radius: 5px; text-align: center;">
+                    Off 🔕
+                </button>
+            </div>
+        </div>
     </div>
-    
 
     <h1>Stock Order</h1>
     <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0;">
@@ -1881,7 +1879,7 @@
         }
     </script>
 
-    <p class="contact-info">🌟If you have any questions or suggestion please contact me (Mark).<br>🌟Stock quantity now will auto update from stock system!!!</p>
+    <p class="contact-info">🌟If you have any questions or suggestion please contact me (Mark).<br>🌟Stock quantity now will auto update from stock system!.</p>
  
 </body>
 </html>
