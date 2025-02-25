@@ -1179,24 +1179,29 @@
 
         // 修改 updateStockDisplay 函数
         function updateStockDisplay() {
-            Object.entries(categories).forEach(([category, products]) => {
-                products.forEach(product => {
-                    const label = document.querySelector(`label[for="item${product.id}"]`);
-                    if (label) {
-                        const stock = stockMap[product.name] || 0;
-                        const stockClass = stock === 0 ? 'zero-stock' : '';
-                        const stockText = stock === 0 ? '(缺货)' : `(Stock: ${stock})`;
-                        
-                        // 添加查看图片按钮（如果有图片URL）
-                        const viewImageButton = product.imageUrl ? 
-                            `<button class="view-image-btn" onclick="showImage('${product.imageUrl}', '${product.name}')">View</button>` : '';
-                        
-                        // 修改这里，将 viewImageButton 放在 stockText 后面
-                        label.innerHTML = `${product.name} <span class="${stockClass}">${stockText} ${viewImageButton}</span>`;
-                    }
-                });
-            });
-        }
+    Object.entries(categories).forEach(([category, products]) => {
+        products.forEach(product => {
+            const label = document.querySelector(`label[for="item${product.id}"]`);
+            if (label) {
+                let stock = stockMap[product.name] || 0;
+                
+                // 特殊处理 Amplang 商品
+                if ([601, 602, 603].includes(product.id)) { // 这三个商品的ID
+                    stock = Math.floor(stock / 60); // 取整数部分
+                }
+
+                const stockClass = stock === 0 ? 'zero-stock' : '';
+                const stockText = stock === 0 ? '(No Stock)' : `(Stock: ${stock})`;
+                
+                // 添加查看图片按钮（如果有图片URL）
+                const viewImageButton = product.imageUrl ? 
+                    `<button class="view-image-btn" onclick="showImage('${product.imageUrl}', '${product.name}')">View</button>` : '';
+                
+                label.innerHTML = `${product.name} <span class="${stockClass}">${stockText} ${viewImageButton}</span>`;
+            }
+        });
+    });
+}
 
         // 分类商品
         const categories = {
