@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<link rel="manifest" href="manifest.json?v=4">
+	<link rel="manifest" href="manifest.json?v=5">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Airport Stock Request</title>
@@ -969,7 +969,7 @@
         </div>
     </div>
 
-    <h1>Stock Order112</h1>
+    <h1>Stock Order333</h1>
     <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0;">
         <h3 style="margin: 0;">Select Shop</h3>
         <!-- 这里保留设置按钮 -->
@@ -1896,6 +1896,15 @@
             lowPerfModeToggle.checked = true;
             document.body.classList.add('low-perf-mode');
         }
+	    if ('serviceWorker' in navigator) {
+  fetch('/manifest.json?v=' + new Date().getTime())
+    .then(response => response.json())
+    .then(manifest => {
+      console.log("Manifest updated:", manifest);
+    })
+    .catch(err => console.log("Failed to fetch manifest:", err));
+}
+
 
         // 添加性能模式切换函数
         function togglePerformanceMode(isLowPerf) {
